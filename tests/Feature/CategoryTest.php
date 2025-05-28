@@ -37,7 +37,7 @@ class CategoryTest extends TestCase
         ];
 
         $this->actingAs($user, 'sanctum')
-            ->postJson(route('api.v1.categories.store'), $data)
+            ->postJson(route('api.v1.panel.categories.store'), $data)
             ->assertStatus(201)
             ->assertJsonStructure(['data']);
     }
@@ -57,7 +57,7 @@ class CategoryTest extends TestCase
         ];
 
         $this->actingAs($user, 'sanctum')
-            ->postJson(route('api.v1.categories.store'), $data)
+            ->postJson(route('api.v1.panel.categories.store'), $data)
             ->assertStatus(201)
             ->assertJsonStructure(['data']);
     }
@@ -75,7 +75,7 @@ class CategoryTest extends TestCase
         ];
 
         $this->actingAs($user, 'sanctum')
-            ->postJson(route('api.v1.categories.store'), $data)
+            ->postJson(route('api.v1.panel.categories.store'), $data)
             ->assertStatus(422)
             ->assertJsonStructure(['errors' => ['parent_uuid', 'descriptions']]);
     }
@@ -94,7 +94,7 @@ class CategoryTest extends TestCase
         ];
 
         $this->actingAs($user, 'sanctum')
-            ->postJson(route('api.v1.categories.store'), $data)
+            ->postJson(route('api.v1.panel.categories.store'), $data)
             ->assertStatus(422)
             ->assertJsonStructure(['errors' => ['slug']]);
     }
@@ -115,7 +115,7 @@ class CategoryTest extends TestCase
 
         // احراز هویت و ارسال درخواست
         $this->actingAs($user, 'sanctum')
-            ->getJson(route('api.v1.categories.index'))
+            ->getJson(route('api.v1.panel.categories.index'))
             ->assertStatus(200)
             ->assertJsonCount(0, 'data.data'); // چون مقاله‌ای نداره، انتظار داریم خروجی صفر باشه
     }
@@ -141,7 +141,7 @@ class CategoryTest extends TestCase
 
         // احراز هویت و ارسال درخواست
         $this->actingAs($user, 'sanctum')
-            ->getJson(route('api.v1.categories.index'))
+            ->getJson(route('api.v1.panel.categories.index'))
             ->assertStatus(200)
             ->assertJsonCount(5, 'data.data'); // فقط ۵ مقاله خودش باید نمایش داده شود
     }
@@ -165,7 +165,7 @@ class CategoryTest extends TestCase
         ];
 
         $this->actingAs($user, 'sanctum')
-            ->putJson(route('api.v1.categories.update',$category), $data)
+            ->putJson(route('api.v1.panel.categories.update',$category), $data)
             ->assertStatus(200)
             ->assertJsonStructure(['data']);
         $this->assertDatabaseHas(Category::class,[
@@ -186,7 +186,7 @@ class CategoryTest extends TestCase
         $userOther = User::factory()->create();
 
         $this->actingAs($userOther, 'sanctum')
-            ->putJson(route('api.v1.categories.update',$category), [])
+            ->putJson(route('api.v1.panel.categories.update',$category), [])
             ->assertStatus(403);
     }
 
@@ -198,7 +198,7 @@ class CategoryTest extends TestCase
         $category = Category::factory()->createOne();
 
         $this->actingAs($user, 'sanctum')
-            ->getJson(route('api.v1.categories.show',$category))
+            ->getJson(route('api.v1.panel.categories.show',$category))
             ->assertStatus(200)
             ->assertJsonStructure(['data']);
     }
@@ -211,7 +211,7 @@ class CategoryTest extends TestCase
         $category = Category::factory()->createOne();
 
         $this->actingAs($user, 'sanctum')
-            ->deleteJson(route('api.v1.categories.destroy',$category))
+            ->deleteJson(route('api.v1.panel.categories.destroy',$category))
             ->assertStatus(200);
         $this->assertDatabaseEmpty(Category::class);
     }
@@ -226,7 +226,7 @@ class CategoryTest extends TestCase
         $userOther = User::factory()->create();
 
         $this->actingAs($userOther, 'sanctum')
-            ->deleteJson(route('api.v1.categories.destroy',$category))
+            ->deleteJson(route('api.v1.panel.categories.destroy',$category))
             ->assertStatus(403);
         $this->assertDatabaseCount(Category::class ,1);
     }

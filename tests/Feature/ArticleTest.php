@@ -48,7 +48,7 @@ class ArticleTest extends TestCase
         ];
 
         $this->actingAs($user, 'sanctum')
-            ->postJson('/api/v1/articles', $data)
+            ->postJson(route('api.v1.panel.articles.store'), $data)
             ->assertStatus(201)
             ->assertJsonStructure(['data']);
     }
@@ -66,7 +66,7 @@ class ArticleTest extends TestCase
         ];
 
         $this->actingAs($user, 'sanctum')
-            ->postJson(route('api.v1.articles.index'), $data)
+            ->postJson(route('api.v1.panel.articles.index'), $data)
             ->assertStatus(422)
             ->assertJsonStructure(['errors' => ['body', 'slug']]);
     }
@@ -77,7 +77,7 @@ class ArticleTest extends TestCase
         Article::factory(5)->create(['status' => 'draft']);
 
         $this->actingAs($user, 'sanctum')
-            ->getJson(route('api.v1.articles.index', ['status' => 'draft']))
+            ->getJson(route('api.v1.panel.articles.index', ['status' => 'draft']))
             ->assertStatus(403);
     }
 
@@ -87,7 +87,7 @@ class ArticleTest extends TestCase
         Article::factory(5)->create(['status' => 'draft']);
 
         $this->actingAs($user, 'sanctum')
-            ->getJson(route('api.v1.articles.index', ['status' => 'published']))
+            ->getJson(route('api.v1.panel.articles.index', ['status' => 'published']))
             ->assertStatus(200)
             ->assertJsonCount(0, 'data.data'); // چون مقاله‌ای نداره، انتظار داریم خروجی صفر باشه
     }
@@ -107,7 +107,7 @@ class ArticleTest extends TestCase
         $user->assignRole('writer');
         // احراز هویت و ارسال درخواست
         $this->actingAs($user, 'sanctum')
-            ->getJson(route('api.v1.articles.index'))
+            ->getJson(route('api.v1.panel.articles.index'))
             ->assertStatus(200)
             ->assertJsonCount(0, 'data.data'); // چون مقاله‌ای نداره، انتظار داریم خروجی صفر باشه
     }
@@ -132,7 +132,7 @@ class ArticleTest extends TestCase
 
         // احراز هویت و ارسال درخواست
         $this->actingAs($user, 'sanctum')
-            ->getJson(route('api.v1.articles.index'))
+            ->getJson(route('api.v1.panel.articles.index'))
             ->assertStatus(200)
             ->assertJsonCount(5, 'data.data'); // فقط ۵ مقاله خودش باید نمایش داده شود
     }
@@ -158,7 +158,7 @@ class ArticleTest extends TestCase
         ];
 
         $this->actingAs($user, 'sanctum')
-            ->putJson(route('api.v1.articles.update', $article), [...$data, 'categories' => $categories->pluck('uuid')->toArray()])
+            ->putJson(route('api.v1.panel.articles.update', $article), [...$data, 'categories' => $categories->pluck('uuid')->toArray()])
             ->assertStatus(200)
             ->assertJsonStructure(['data']);
         $this->assertDatabaseHas(Article::class, [
@@ -187,7 +187,7 @@ class ArticleTest extends TestCase
         $userOther = User::factory()->create();
 
         $this->actingAs($userOther, 'sanctum')
-            ->putJson(route('api.v1.articles.update', $article), [])
+            ->putJson(route('api.v1.panel.articles.update', $article), [])
             ->assertStatus(403);
     }
 
@@ -198,7 +198,7 @@ class ArticleTest extends TestCase
         $article = Article::factory()->createOne();
 
         $this->actingAs($user, 'sanctum')
-            ->getJson(route('api.v1.articles.show', $article))
+            ->getJson(route('api.v1.panel.articles.show', $article))
             ->assertStatus(200)
             ->assertJsonStructure(['data']);
     }
@@ -210,7 +210,7 @@ class ArticleTest extends TestCase
         $article = Article::factory()->createOne();
 
         $this->actingAs($user, 'sanctum')
-            ->deleteJson(route('api.v1.articles.destroy', $article))
+            ->deleteJson(route('api.v1.panel.articles.destroy', $article))
             ->assertStatus(200);
         $this->assertDatabaseEmpty(Article::class);
     }
@@ -224,7 +224,7 @@ class ArticleTest extends TestCase
         $userOther = User::factory()->create();
 
         $this->actingAs($userOther, 'sanctum')
-            ->deleteJson(route('api.v1.articles.destroy', $article))
+            ->deleteJson(route('api.v1.panel.articles.destroy', $article))
             ->assertStatus(403);
         $this->assertDatabaseCount(Article::class, 1);
     }
@@ -246,7 +246,7 @@ class ArticleTest extends TestCase
         ];
 
         $this->actingAs($user, 'sanctum')
-            ->postJson(route('api.v1.articles.store'), [...$data, 'categories' => $categories->pluck('uuid')->toArray()])
+            ->postJson(route('api.v1.panel.articles.store'), [...$data, 'categories' => $categories->pluck('uuid')->toArray()])
             ->assertStatus(201)
             ->assertJsonStructure(['data']);
 
@@ -262,5 +262,22 @@ class ArticleTest extends TestCase
             ]);
         }
 
+    }
+
+    public function test_user_can_see_published_articles(): void
+    {
+        $user = User::factory()->create();
+        $articles = Article::factory(5)->create([
+            'published_at' => now()->subDays(1),
+            'status' => 'published'
+        ]);
+
+        $this->getJson(route('api.v1.articles.index'))
+            ->assertStatus(200)
+            ->assertJsonStructure(['data' => ['data' => [ 0 => ['title'] ] ]]);
+
+        $this->getJson(route('api.v1.articles.show', $articles->first()))
+            ->assertStatus(200)
+            ->assertJsonStructure(['data' => ['title']]);
     }
 }

@@ -16,7 +16,7 @@ class ProfileTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAs($user, 'sanctum')
-            ->getJson('/api/v1/auth/profile')
+            ->getJson(route('api.v1.panel.auth.profile.show'))
             ->assertStatus(200)
             ->assertJsonStructure(['data']);
     }
@@ -29,7 +29,7 @@ class ProfileTest extends TestCase
             'last_name' => 'Test',
         ];
         $this->actingAs($user, 'sanctum')
-            ->putJson('/api/v1/auth/profile',$data)
+            ->putJson(route('api.v1.panel.auth.profile.update'),$data)
             ->assertStatus(200)
             ->assertJsonStructure(['data']);
         $this->assertDatabaseHas('users', [
