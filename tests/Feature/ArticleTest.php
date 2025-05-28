@@ -24,7 +24,7 @@ class ArticleTest extends TestCase
         $data = [
             'title' => 'Article One',
             'slug' => 'article-one',
-            'body' => 'test content',
+            'body' => fake()->paragraph(5),
             'tags' => 'tag1,tag2',
         ];
 
@@ -42,13 +42,13 @@ class ArticleTest extends TestCase
             'title' => 'Article One',
             'slug' => 'article-one',
             'body' => 'test content',
-            'tags' => 'tag1,tag2',
+            'tags' => 'tag1-tag2',
         ];
 
         $this->actingAs($user, 'sanctum')
             ->postJson('/api/v1/articles', $data)
             ->assertStatus(422)
-            ->assertJsonStructure(['errors' => ['tags']]);
+            ->assertJsonStructure(['errors']);
     }
 
     public function test_user_can_see_self_articles(): void

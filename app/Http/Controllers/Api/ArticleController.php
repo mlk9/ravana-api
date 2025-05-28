@@ -24,8 +24,8 @@ class ArticleController extends Controller
         $data = $request->validate([
             'title' => ['required'],
             'slug' => ['required', 'unique:articles,slug'],
-            'body' => ['required'],
-            'tags' => ['required', 'regex:/^([a-zA-Z0-9_-]+)(,[a-zA-Z0-9_-]+)*$/'],
+            'body' => ['required', 'min:50'],
+            'tags' => ['required', 'regex:/^[^,\s]+(,[^,\s]+)*$/u'],
         ]);
         $data['author_uuid'] = $request->user()->uuid;
         $article = Article::query()->create($data);
