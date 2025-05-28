@@ -230,4 +230,18 @@ class CategoryTest extends TestCase
             ->assertStatus(403);
         $this->assertDatabaseCount(Category::class ,1);
     }
+
+    public function test_user_can_see_categories(): void
+    {
+        $user = User::factory()->create();
+        $categories = Category::factory(5)->create();
+
+        $this->getJson(route('api.v1.categories.index'))
+            ->assertStatus(200)
+            ->assertJsonStructure(['data' => ['data' => [ 0 => ['name'] ] ]]);
+
+        $this->getJson(route('api.v1.categories.show', $categories->first()))
+            ->assertStatus(200)
+            ->assertJsonStructure(['data' => ['name']]);
+    }
 }

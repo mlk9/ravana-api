@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.v1.')->middleware([])->group(function (){
     Route::apiResource('articles', \App\Http\Controllers\ArticleController::class)->only(['index', 'show']);
+    Route::apiResource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'show']);
 });
 
 Route::prefix('v1')->name('api.v1.')->middleware(['guest'])->group(function (){
