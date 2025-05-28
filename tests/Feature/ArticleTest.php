@@ -40,33 +40,131 @@ class ArticleTest extends TestCase
 
         $data = [
             'title' => 'Article One',
-            'slug' => 'article-one',
             'body' => 'test content',
-            'tags' => 'tag1-tag2',
+            'tags' => 'tag1,tag2',
         ];
 
         $this->actingAs($user, 'sanctum')
             ->postJson('/api/v1/articles', $data)
             ->assertStatus(422)
-            ->assertJsonStructure(['errors']);
+            ->assertJsonStructure(['errors' => ['body', 'slug']]);
+    }
+
+    public function test_user_cannot_see_other_articles(): void
+    {
+        // ساخت کاربران و مقالات متعلق به بقیه کاربران
+        $otherUsers = User::factory(5)->create();
+        foreach ($otherUsers as $otherUser) {
+            Article::factory(3)->create([
+                'author_uuid' => $otherUser->uuid,
+            ]);
+        }
+
+        // ساخت کاربر تست و بدون هیچ مقاله‌ای برای خودش
+        $user = User::factory()->create();
+
+        // احراز هویت و ارسال درخواست
+        $this->actingAs($user, 'sanctum')
+            ->getJson('/api/v1/articles')
+            ->assertStatus(200)
+            ->assertJsonCount(0, 'data.data'); // چون مقاله‌ای نداره، انتظار داریم خروجی صفر باشه
     }
 
     public function test_user_can_see_self_articles(): void
     {
-        $users = User::factory(15)->create();
-        Article::factory(15)->create();
-
-
+        // ساخت کاربر تست
         $user = User::factory()->create();
-        Article::factory(15)->create([
+
+        // ساخت مقالات برای کاربر تست
+        Article::factory(5)->create([
             'author_uuid' => $user->uuid,
         ]);
 
+        // ساخت چند مقاله برای کاربران دیگر
+        $otherUsers = User::factory(3)->create();
+        foreach ($otherUsers as $otherUser) {
+            Article::factory(2)->create([
+                'author_uuid' => $otherUser->uuid,
+            ]);
+        }
+
+        // احراز هویت و ارسال درخواست
         $this->actingAs($user, 'sanctum')
             ->getJson('/api/v1/articles')
             ->assertStatus(200)
-            ->assertJsonCount(15, 'data.data'); // بررسی اینکه فقط ۱۵ مقاله آمده
+            ->assertJsonCount(5, 'data.data'); // فقط ۵ مقاله خودش باید نمایش داده شود
     }
 
 
+    public function test_user_can_update_self_article(): void
+    {
+        $user = User::factory()->create();
+        $article = Article::factory(1)->createOne([
+            'slug' => 'article-one',
+        ]);
+
+        $data = [
+            'title' => 'Article One 2',
+            'slug' => 'article-one',
+            'tags' => 'tag1,tg3'
+        ];
+
+        $this->actingAs($user, 'sanctum')
+            ->putJson(route('api.v1.articles.update',$article), $data)
+            ->assertStatus(200)
+            ->assertJsonStructure(['article']);
+        $this->assertDatabaseHas(Article::class,[
+            'uuid' => $article->uuid,
+            'title' => 'Article One 2',
+            'slug' => 'article-one',
+            'tags' => 'tag1,tg3'
+        ]);
+    }
+
+    public function test_user_cannot_update_other_article(): void
+    {
+        $user = User::factory()->create();
+        $article = Article::factory()->createOne();
+
+        $userOther = User::factory()->create();
+
+        $this->actingAs($userOther, 'sanctum')
+            ->putJson(route('api.v1.articles.update',$article), [])
+            ->assertStatus(403);
+    }
+
+    public function test_user_can_see_article(): void
+    {
+        $user = User::factory()->create();
+        $article = Article::factory()->createOne();
+
+        $this->actingAs($user, 'sanctum')
+            ->getJson(route('api.v1.articles.show',$article))
+            ->assertStatus(200)
+            ->assertJsonStructure(['article']);
+    }
+
+    public function test_user_can_delete_self_article(): void
+    {
+        $user = User::factory()->create();
+        $article = Article::factory()->createOne();
+
+        $this->actingAs($user, 'sanctum')
+            ->deleteJson(route('api.v1.articles.destroy',$article))
+            ->assertStatus(200);
+        $this->assertDatabaseEmpty(Article::class);
+    }
+
+    public function test_user_cannot_delete_other_article(): void
+    {
+        $user = User::factory()->create();
+        $article = Article::factory()->createOne();
+
+        $userOther = User::factory()->create();
+
+        $this->actingAs($userOther, 'sanctum')
+            ->deleteJson(route('api.v1.articles.destroy',$article))
+            ->assertStatus(403);
+        $this->assertDatabaseCount(Article::class ,1);
+    }
 }
