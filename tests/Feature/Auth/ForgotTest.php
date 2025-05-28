@@ -43,14 +43,14 @@ class ForgotTest extends TestCase
         $this->postJson('/api/v1/auth/forgot/change-password', [
             'email' => $user->email,
             'token' => $token, // نسخه غیر هش‌شده که توی فرم کاربر وارد می‌کنه
-            'password' => 'new-password',
-            'password_confirmation' => 'new-password',
+            'password' => '@Pp78651234',
+            'password_confirmation' => '@Pp78651234',
         ])->assertStatus(200);
 
         // اطمینان از این که با رمز جدید می‌تونه وارد شه
         $this->postJson('/api/v1/auth/login', [
             'email' => $user->email,
-            'password' => 'new-password',
+            'password' => '@Pp78651234',
         ])->assertStatus(200);
     }
 }

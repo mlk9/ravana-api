@@ -18,7 +18,7 @@ class RegisterTest extends TestCase
             'first_name' => 'محمد',
             'last_name' => 'ملکی',
             'email' => 'mohammad@test.com',
-            'password' => 'password',
+            'password' => '@Pp78651234',
         ];
 
         $this->postJson('/api/v1/auth/register', $data)
@@ -32,7 +32,7 @@ class RegisterTest extends TestCase
             'first_name' => 'محمد',
             'last_name' => 'ملکی',
             'email' => 'mohammad@test.com',
-            'password' => 'password',
+            'password' => '@Pp78651234',
         ];
 
         $this->postJson('/api/v1/auth/register', $data)->assertStatus(201);
@@ -46,7 +46,7 @@ class RegisterTest extends TestCase
             'first_name' => 'محمد',
             'last_name' => 'ملکی',
             'email' => 'mohammad',
-            'password' => 'password',
+            'password' => '@Pp78651234',
         ];
 
         $this->postJson('/api/v1/auth/register', $data)->assertStatus(422);
@@ -72,7 +72,7 @@ class RegisterTest extends TestCase
     {
         $data = [
             'email' => 'mohammad',
-            'password' => 'password',
+            'password' => '@Pp78651234',
         ];
 
         $this->postJson('/api/v1/auth/register', $data)->assertStatus(422);
