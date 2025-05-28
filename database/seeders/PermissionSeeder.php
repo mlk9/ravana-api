@@ -20,6 +20,12 @@ class PermissionSeeder extends Seeder
             'articles.edit',
             'articles.show',
             'articles.destroy',
+
+            'categories.index',
+            'categories.create',
+            'categories.edit',
+            'categories.show',
+            'categories.destroy',
         ];
 
         $all = [

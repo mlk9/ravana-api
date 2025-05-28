@@ -23,6 +23,8 @@ Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum'])->group(functi
     });
     //article
     Route::apiResource('articles', ArticleController::class);
+    //category
+    Route::apiResource('categories', \App\Http\Controllers\Api\CategoryController::class);
 });
 
 

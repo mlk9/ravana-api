@@ -21,7 +21,7 @@ class ArticleController extends Controller
 
         $request->validate([
             'status' => ['nullable', 'in:draft,archived,published'],
-            'order' => ['nullable', 'in:name,published_at,created_at'],
+            'order' => ['nullable', 'in:title,published_at,created_at'],
             'dir' => ['nullable', 'in:asc,desc']
         ]);
 
@@ -45,8 +45,8 @@ class ArticleController extends Controller
     {
         Gate::authorize('create', Article::class);
         $data = $request->validate([
-            'title' => ['required'],
-            'slug' => ['required', 'unique:articles,slug'],
+            'title' => ['required', 'string', 'min:3'],
+            'slug' => ['required', 'string', 'min:3', 'unique:articles,slug'],
             'body' => ['required', 'min:50'],
             'tags' => ['required'],
             'status' => ['required', 'in:draft,archived,published'],
@@ -62,8 +62,8 @@ class ArticleController extends Controller
     {
 
         $data = $request->validate([
-            'title' => ['nullable'],
-            'slug' => ['nullable', Rule::unique('articles', 'slug')->ignore($uuid, 'uuid')],
+            'title' => ['nullable', 'string', 'min:3'],
+            'slug' => ['nullable', 'string', 'min:3', Rule::unique('articles', 'slug')->ignore($uuid, 'uuid')],
             'body' => ['nullable', 'min:50'],
             'tags' => ['nullable'],
             'status' => ['nullable', 'in:draft,archived,published'],
