@@ -20,6 +20,15 @@ return new class extends Migration
             $table->foreignUuid('creator_uuid')->references('uuid')->on('users')->nullOnDelete();
             $table->timestamps();
         });
+
+        Schema::create('articles_categories', function (Blueprint $table) {
+            $table->foreignUuid('article_uuid')->references('uuid')->on('articles')->cascadeOnDelete();
+            $table->foreignUuid('category_uuid')->references('uuid')->on('categories')->cascadeOnDelete();
+            $table->primary(['article_uuid', 'category_uuid']);
+            $table->unique(['article_uuid', 'category_uuid']);
+            $table->timestamps();
+        });
+
     }
 
     /**
@@ -27,6 +36,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('articles_categories');
         Schema::dropIfExists('categories');
     }
 };

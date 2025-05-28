@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Article extends Model
 {
@@ -35,5 +36,10 @@ class Article extends Model
     public function author() : BelongsTo
     {
         return $this->belongsTo(User::class,'author_uuid');
+    }
+
+    public function categories() : BelongsToMany
+    {
+        return $this->belongsToMany(Category::class,'articles_categories', 'article_uuid');
     }
 }

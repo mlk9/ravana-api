@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Article;
+use App\Models\Category;
 use App\Models\User;
 use Database\Seeders\PermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -145,6 +146,9 @@ class ArticleTest extends TestCase
             'slug' => 'article-one',
         ]);
 
+
+        $categories = Category::factory(3)->create();
+
         $data = [
             'title' => 'Article One 2',
             'slug' => 'article-one',
@@ -154,10 +158,10 @@ class ArticleTest extends TestCase
         ];
 
         $this->actingAs($user, 'sanctum')
-            ->putJson(route('api.v1.articles.update',$article), $data)
+            ->putJson(route('api.v1.articles.update', $article), [...$data, 'categories' => $categories->pluck('uuid')->toArray()])
             ->assertStatus(200)
             ->assertJsonStructure(['data']);
-        $this->assertDatabaseHas(Article::class,[
+        $this->assertDatabaseHas(Article::class, [
             'uuid' => $article->uuid,
             'title' => 'Article One 2',
             'slug' => 'article-one',
@@ -165,6 +169,13 @@ class ArticleTest extends TestCase
             'status' => 'published',
             'published_at' => now()
         ]);
+
+        foreach ($categories as $category) {
+            $this->assertDatabaseHas('articles_categories', [
+                'article_uuid' => Article::query()->where('slug', $data['slug'])->first()->uuid,
+                'category_uuid' => $category->uuid,
+            ]);
+        }
     }
 
     public function test_user_cannot_update_other_article(): void
@@ -176,7 +187,7 @@ class ArticleTest extends TestCase
         $userOther = User::factory()->create();
 
         $this->actingAs($userOther, 'sanctum')
-            ->putJson(route('api.v1.articles.update',$article), [])
+            ->putJson(route('api.v1.articles.update', $article), [])
             ->assertStatus(403);
     }
 
@@ -187,7 +198,7 @@ class ArticleTest extends TestCase
         $article = Article::factory()->createOne();
 
         $this->actingAs($user, 'sanctum')
-            ->getJson(route('api.v1.articles.show',$article))
+            ->getJson(route('api.v1.articles.show', $article))
             ->assertStatus(200)
             ->assertJsonStructure(['data']);
     }
@@ -199,7 +210,7 @@ class ArticleTest extends TestCase
         $article = Article::factory()->createOne();
 
         $this->actingAs($user, 'sanctum')
-            ->deleteJson(route('api.v1.articles.destroy',$article))
+            ->deleteJson(route('api.v1.articles.destroy', $article))
             ->assertStatus(200);
         $this->assertDatabaseEmpty(Article::class);
     }
@@ -213,8 +224,43 @@ class ArticleTest extends TestCase
         $userOther = User::factory()->create();
 
         $this->actingAs($userOther, 'sanctum')
-            ->deleteJson(route('api.v1.articles.destroy',$article))
+            ->deleteJson(route('api.v1.articles.destroy', $article))
             ->assertStatus(403);
-        $this->assertDatabaseCount(Article::class ,1);
+        $this->assertDatabaseCount(Article::class, 1);
+    }
+
+    public function test_user_can_create_article_with_category(): void
+    {
+        $user = User::factory()->create();
+        $user->assignRole('writer');
+
+        $categories = Category::factory(3)->create();
+
+        $data = [
+            'title' => 'Article One',
+            'slug' => 'article-one',
+            'body' => fake()->paragraph(5),
+            'tags' => 'tag1,tag2',
+            'status' => 'published',
+            'published_at' => now()->timestamp,
+        ];
+
+        $this->actingAs($user, 'sanctum')
+            ->postJson(route('api.v1.articles.store'), [...$data, 'categories' => $categories->pluck('uuid')->toArray()])
+            ->assertStatus(201)
+            ->assertJsonStructure(['data']);
+
+        $data['published_at'] = now();
+
+        $this->assertDatabaseHas(Article::class, $data);
+
+
+        foreach ($categories as $category) {
+            $this->assertDatabaseHas('articles_categories', [
+                'article_uuid' => Article::query()->where('slug', $data['slug'])->first()->uuid,
+                'category_uuid' => $category->uuid,
+            ]);
+        }
+
     }
 }

@@ -51,9 +51,15 @@ class ArticleController extends Controller
             'tags' => ['required'],
             'status' => ['required', 'in:draft,archived,published'],
             'published_at' => ['required', 'integer', 'min:946684800'],
+            'categories' => ['nullable', 'array' , 'exists:categories,uuid']
         ]);
         $data['author_uuid'] = $request->user()->uuid;
         $article = Article::query()->create($data);
+
+        if($request->filled('categories'))
+        {
+            $article->categories()->attach($request->input('categories'));
+        }
 
         return $this->success(['data' => $article->toArray(), 'code' => 201]);
     }
@@ -68,9 +74,16 @@ class ArticleController extends Controller
             'tags' => ['nullable'],
             'status' => ['nullable', 'in:draft,archived,published'],
             'published_at' => ['nullable', 'integer', 'min:946684800'],
+            'categories' => ['nullable', 'array' , 'exists:categories,uuid']
         ]);
 
         $article = Article::query()->where('uuid', $uuid)->first();
+
+        if($request->filled('categories'))
+        {
+            $article->categories()->detach();
+            $article->categories()->attach($request->input('categories'));
+        }
 
         if (is_null($article)) {
             return $this->error([
@@ -82,6 +95,7 @@ class ArticleController extends Controller
         Gate::authorize('update', $article);
 
         $article->update($data);
+
         $article->refresh();
 
         return $this->success(['data' => $article->toArray()]);
