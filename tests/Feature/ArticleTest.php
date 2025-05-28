@@ -280,4 +280,6 @@ class ArticleTest extends TestCase
             ->assertStatus(200)
             ->assertJsonStructure(['data' => ['title']]);
     }
+
+
 }

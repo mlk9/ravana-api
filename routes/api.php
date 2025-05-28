@@ -5,12 +5,12 @@ use App\Http\Controllers\Panel\ArticleController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::prefix('v1')->name('api.v1.')->middleware([])->group(function (){
+Route::prefix('v1')->name('api.v1.')->middleware(['throttle:api'])->group(function (){
     Route::apiResource('articles', \App\Http\Controllers\ArticleController::class)->only(['index', 'show']);
     Route::apiResource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'show']);
 });
 
-Route::prefix('v1')->name('api.v1.')->middleware(['guest'])->group(function (){
+Route::prefix('v1')->name('api.v1.')->middleware(['guest','throttle:api'])->group(function (){
     //auth
     Route::prefix('auth')->name('auth.')->group(function (){
         Route::post('/register',[\App\Http\Controllers\Panel\AuthController::class,'register'])->name('register');
@@ -20,7 +20,7 @@ Route::prefix('v1')->name('api.v1.')->middleware(['guest'])->group(function (){
     });
 });
 
-Route::prefix('v1/panel')->name('api.v1.panel.')->middleware(['auth:sanctum'])->group(function (){
+Route::prefix('v1/panel')->name('api.v1.panel.')->middleware(['auth:sanctum','throttle:api'])->group(function (){
     //auth
     Route::prefix('auth')->name('auth.')->group(function () {
         Route::get('/profile', [\App\Http\Controllers\Panel\AuthController::class, 'profile'])->name('profile.show');
