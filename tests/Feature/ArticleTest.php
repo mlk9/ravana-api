@@ -31,7 +31,7 @@ class ArticleTest extends TestCase
         $this->actingAs($user, 'sanctum')
             ->postJson('/api/v1/articles', $data)
             ->assertStatus(201)
-            ->assertJsonStructure(['article']);
+            ->assertJsonStructure(['data']);
     }
 
     public function test_user_cannot_create_article_with_invalid_data(): void
@@ -45,7 +45,7 @@ class ArticleTest extends TestCase
         ];
 
         $this->actingAs($user, 'sanctum')
-            ->postJson('/api/v1/articles', $data)
+            ->postJson(route('api.v1.articles.index'), $data)
             ->assertStatus(422)
             ->assertJsonStructure(['errors' => ['body', 'slug']]);
     }
@@ -65,7 +65,7 @@ class ArticleTest extends TestCase
 
         // احراز هویت و ارسال درخواست
         $this->actingAs($user, 'sanctum')
-            ->getJson('/api/v1/articles')
+            ->getJson(route('api.v1.articles.index'))
             ->assertStatus(200)
             ->assertJsonCount(0, 'data.data'); // چون مقاله‌ای نداره، انتظار داریم خروجی صفر باشه
     }
@@ -90,7 +90,7 @@ class ArticleTest extends TestCase
 
         // احراز هویت و ارسال درخواست
         $this->actingAs($user, 'sanctum')
-            ->getJson('/api/v1/articles')
+            ->getJson(route('api.v1.articles.index'))
             ->assertStatus(200)
             ->assertJsonCount(5, 'data.data'); // فقط ۵ مقاله خودش باید نمایش داده شود
     }
@@ -112,7 +112,7 @@ class ArticleTest extends TestCase
         $this->actingAs($user, 'sanctum')
             ->putJson(route('api.v1.articles.update',$article), $data)
             ->assertStatus(200)
-            ->assertJsonStructure(['article']);
+            ->assertJsonStructure(['data']);
         $this->assertDatabaseHas(Article::class,[
             'uuid' => $article->uuid,
             'title' => 'Article One 2',
@@ -141,7 +141,7 @@ class ArticleTest extends TestCase
         $this->actingAs($user, 'sanctum')
             ->getJson(route('api.v1.articles.show',$article))
             ->assertStatus(200)
-            ->assertJsonStructure(['article']);
+            ->assertJsonStructure(['data']);
     }
 
     public function test_user_can_delete_self_article(): void

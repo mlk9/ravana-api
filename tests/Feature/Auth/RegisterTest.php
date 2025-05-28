@@ -23,7 +23,7 @@ class RegisterTest extends TestCase
 
         $this->postJson('/api/v1/auth/register', $data)
             ->assertStatus(201)
-            ->assertJsonStructure(['user', 'token']);
+            ->assertJsonStructure(['data' => ['user', 'token']]);
     }
 
     public function test_user_cannot_register_with_duplicate_email()

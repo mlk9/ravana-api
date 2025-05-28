@@ -1153,5 +1153,7 @@
     "Zimbabwe": "زیمباوه",
     "ZIP / Postal Code": "کد پستی",
     "Zip / Postal Code": "کدپستی",
-    "Åland Islands": "جزایر الند"
+    "Åland Islands": "جزایر الند",
+    "The provided token is invalid. Please ensure the information you entered is correct.": "توکن واردشده نامعتبر است. لطفاً از صحت اطلاعات واردشده اطمینان حاصل فرمایید.",
+    "You are not authorized to access this data.": "شما مجاز به دسترسی به این داده نمی\u200Cباشید."
 }

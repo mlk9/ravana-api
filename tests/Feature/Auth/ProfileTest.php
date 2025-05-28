@@ -18,7 +18,7 @@ class ProfileTest extends TestCase
         $this->actingAs($user, 'sanctum')
             ->getJson('/api/v1/auth/profile')
             ->assertStatus(200)
-            ->assertJsonStructure(['user']);
+            ->assertJsonStructure(['data']);
     }
 
     public function test_can_update_profile(): void
@@ -31,7 +31,7 @@ class ProfileTest extends TestCase
         $this->actingAs($user, 'sanctum')
             ->putJson('/api/v1/auth/profile',$data)
             ->assertStatus(200)
-            ->assertJsonStructure(['user']);
+            ->assertJsonStructure(['data']);
         $this->assertDatabaseHas('users', [
             'uuid' => $user->uuid,
             'first_name' => 'test',

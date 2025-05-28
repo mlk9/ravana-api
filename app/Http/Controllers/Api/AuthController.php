@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
+    use ApiResponse;
+
     public function register(Request $request) : JsonResponse
     {
         $validated = $request->validate([
@@ -22,10 +25,13 @@ class AuthController extends Controller
         $validated['password'] = Hash::make($validated['password']);
         $user = User::query()->create($validated);
 
-        return response()->json([
-            'user' => $user,
-            'token' => $user->createToken('First Api')->plainTextToken
-        ],201);
+        return $this->success([
+            'data' => [
+                'user' => $user,
+                'token' => $user->createToken('First Api')->plainTextToken
+            ],
+            'code' => 201
+        ]);
     }
 
     public function login(Request $request) : JsonResponse
@@ -39,14 +45,20 @@ class AuthController extends Controller
         {
             if(Hash::check($request->input('password'),$user->password))
             {
-                return response()->json([
-                    'user' => $user,
-                    'token' => $user->createToken('First Api')->plainTextToken
-                ],200);
+                return $this->success([
+                    'data' => [
+                        'user' => $user,
+                        'token' => $user->createToken('First Api')->plainTextToken
+                    ],
+                    'code' => 200
+                ]);
             }
         }
-
-        return response()->json(['email' => 'user not founded!'],404);
+        return $this->error([
+            'message' => __('No users matched the given criteria.'),
+            'errors' => ['email' => __('No users matched the given criteria.')],
+            'code' => 404
+        ]);
     }
 
     public function forgot(Request $request) : JsonResponse
@@ -60,7 +72,7 @@ class AuthController extends Controller
           $token = Password::createToken($user);
         }
 
-        return response()->json([],200);
+        return $this->success();
     }
 
     public function change_password(Request $request) : JsonResponse
@@ -77,18 +89,20 @@ class AuthController extends Controller
             if(Password::tokenExists($user,$request->input('token')))
             {
                 $user->update(['password' => Hash::make($request->input('password'))]);
-                return response()->json([],200);
+                return $this->success();
             }else{
-                return response()->json([],422);
+                return $this->error([
+                    'message' => __('The provided token is invalid. Please ensure the information you entered is correct.')
+                ]);
             }
         }
 
-        return response()->json([],422);
+        return $this->error();
     }
 
     public function profile(Request $request) : JsonResponse
     {
-        return response()->json(['user' => $request->user()->toArray()],200);
+        return $this->success(['data' => $request->user()->toArray()]);
     }
 
     public function profile_update(Request $request) : JsonResponse
@@ -106,7 +120,12 @@ class AuthController extends Controller
             $validated['password'] = Hash::make($validated['password']);
         }
         $res = $user->update($validated);
-        return response()->json(['user' => $user],$res ? 200 : 422);
+        if($res)
+        {
+            return $this->success(['data' => $request->user()->toArray()]);
+        }else{
+            return $this->error();
+        }
     }
 
 

@@ -17,7 +17,7 @@ class LoginTest extends TestCase
 
         $this->postJson('/api/v1/auth/login', ['email' => $user->email, 'password' => 'password'])
             ->assertStatus(200)
-            ->assertJsonStructure(['user', 'token']);
+            ->assertJsonStructure(['data' => ['user', 'token']]);
     }
 
     public function test_user_cannot_login_with_wrong_password(): void
