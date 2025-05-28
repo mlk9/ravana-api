@@ -18,11 +18,11 @@ class ArticleFactory extends Factory
     public function definition(): array
     {
         $title = join(' ', $this->faker->words(5));
-        $slug = str($title)->replace(' ','-').now()->format('ymdhis');
+        $slug = str($title)->replace(' ', '-') . now()->format('ymdhis');
         $user = User::query()->inRandomOrder()->first();
 
-        if (! $user) {
-            $user = User::factory()->create(); // یا firstOrCreate(['email' => 'x@test.com'], [...])
+        if (!$user) {
+            $user = User::factory()->create();
         }
 
         $author_uuid = $user->uuid;
@@ -30,7 +30,9 @@ class ArticleFactory extends Factory
             'title' => $title,
             'slug' => $slug,
             'body' => $this->faker->paragraph(6),
-            'tags' => $this->faker->words(6,true),
+            'tags' => $this->faker->words(6, true),
+            'status' => $this->faker->randomElement(['draft', 'archived', 'published']),
+            'published_at' => $this->faker->randomElement([now()->addDays(rand(1, 30)), now()->subDays(rand(1, 30))]),
             'author_uuid' => $author_uuid
         ];
     }

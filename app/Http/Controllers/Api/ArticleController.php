@@ -17,11 +17,26 @@ class ArticleController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        Gate::authorize('viewAny', Article::class);
+        Gate::authorize('viewAny', [Article::class, $request->input('status')]);
+
+        $request->validate([
+            'status' => ['nullable', 'in:draft,archived,published'],
+            'order' => ['nullable', 'in:name,published_at,created_at'],
+            'dir' => ['nullable', 'in:asc,desc']
+        ]);
 
         $articles = Article::query()
-            ->where('author_uuid', Auth::user()->uuid)
-            ->paginate(25);
+            ->where('author_uuid', Auth::user()->uuid);
+
+        if ($request->filled('status')) {
+            $articles->where('status', $request->input('status'));
+        }
+
+        if ($request->filled('dir') && $request->filled('order')) {
+            $articles->orderBy($request->input('order'), $request->input('dir'));
+        }
+
+        $articles = $articles->paginate($request->input('per_page', 25), ['*'], 'page', $request->input('page', 1));
 
         return $this->success(['data' => $articles->toArray()]);
     }
@@ -34,6 +49,8 @@ class ArticleController extends Controller
             'slug' => ['required', 'unique:articles,slug'],
             'body' => ['required', 'min:50'],
             'tags' => ['required'],
+            'status' => ['required', 'in:draft,archived,published'],
+            'published_at' => ['required', 'integer', 'min:946684800'],
         ]);
         $data['author_uuid'] = $request->user()->uuid;
         $article = Article::query()->create($data);
@@ -49,6 +66,8 @@ class ArticleController extends Controller
             'slug' => ['nullable', Rule::unique('articles', 'slug')->ignore($uuid, 'uuid')],
             'body' => ['nullable', 'min:50'],
             'tags' => ['nullable'],
+            'status' => ['nullable', 'in:draft,archived,published'],
+            'published_at' => ['nullable', 'integer', 'min:946684800'],
         ]);
 
         $article = Article::query()->where('uuid', $uuid)->first();

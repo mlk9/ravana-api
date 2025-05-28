@@ -19,7 +19,17 @@ class Article extends Model
         'slug',
         'body',
         'tags',
+        'status',
+        'published_at',
         'author_uuid'
+    ];
+
+    protected $casts = [
+        'published_at' => 'datetime'
+    ];
+
+    protected $hidden = [
+        'author_uuid',
     ];
 
     public function author() : BelongsTo

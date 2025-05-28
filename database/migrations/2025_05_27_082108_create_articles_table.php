@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->longText('body');
             $table->string('tags')->nullable();
+            $table->enum('status', ['archived', 'draft', 'published'])->default('draft');
+            $table->timestamp('published_at')->nullable();
             $table->foreignUuid('author_uuid')->references('uuid')->on('users')->nullOnDelete();
             $table->timestamps();
         });

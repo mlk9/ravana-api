@@ -42,6 +42,8 @@ class ArticleTest extends TestCase
             'slug' => 'article-one',
             'body' => fake()->paragraph(5),
             'tags' => 'tag1,tag2',
+            'status' => 'published',
+            'published_at' => now()->timestamp
         ];
 
         $this->actingAs($user, 'sanctum')
@@ -58,12 +60,35 @@ class ArticleTest extends TestCase
             'title' => 'Article One',
             'body' => 'test content',
             'tags' => 'tag1,tag2',
+            'status' => 'published',
+            'published_at' => now()->subDays(3)->timestamp
         ];
 
         $this->actingAs($user, 'sanctum')
             ->postJson(route('api.v1.articles.index'), $data)
             ->assertStatus(422)
             ->assertJsonStructure(['errors' => ['body', 'slug']]);
+    }
+
+    public function test_normal_user_cannot_see_draft_articles(): void
+    {
+        $user = User::factory()->create();
+        Article::factory(5)->create(['status' => 'draft']);
+
+        $this->actingAs($user, 'sanctum')
+            ->getJson(route('api.v1.articles.index', ['status' => 'draft']))
+            ->assertStatus(403);
+    }
+
+    public function test_normal_user_can_see_published_articles(): void
+    {
+        $user = User::factory()->create();
+        Article::factory(5)->create(['status' => 'draft']);
+
+        $this->actingAs($user, 'sanctum')
+            ->getJson(route('api.v1.articles.index', ['status' => 'published']))
+            ->assertStatus(200)
+            ->assertJsonCount(0, 'data.data'); // چون مقاله‌ای نداره، انتظار داریم خروجی صفر باشه
     }
 
     public function test_user_cannot_see_other_articles(): void
@@ -123,7 +148,9 @@ class ArticleTest extends TestCase
         $data = [
             'title' => 'Article One 2',
             'slug' => 'article-one',
-            'tags' => 'tag1,tg3'
+            'tags' => 'tag1,tg3',
+            'status' => 'published',
+            'published_at' => now()->timestamp
         ];
 
         $this->actingAs($user, 'sanctum')
@@ -134,7 +161,9 @@ class ArticleTest extends TestCase
             'uuid' => $article->uuid,
             'title' => 'Article One 2',
             'slug' => 'article-one',
-            'tags' => 'tag1,tg3'
+            'tags' => 'tag1,tg3',
+            'status' => 'published',
+            'published_at' => now()
         ]);
     }
 

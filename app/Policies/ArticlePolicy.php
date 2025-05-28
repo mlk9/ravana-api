@@ -7,9 +7,14 @@ use App\Models\User;
 
 class ArticlePolicy
 {
-    public function viewAny(User $user): bool
+    public function viewAny(User $user, $status): bool
     {
-        return $user->can('articles.index');
+        if($user->hasPermissionTo('articles.index'))
+        {
+            return true;
+        }else{
+            return $status==='published';
+        }
     }
 
     public function view(User $user, Article $article): bool
