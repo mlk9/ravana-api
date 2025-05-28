@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Article;
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -14,12 +15,27 @@ class ArticleTest extends TestCase
 
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(PermissionSeeder::class);
+    }
+
+    public function test_user_can_give_role(): void
+    {
+        $user = User::factory()->create();
+        $user->assignRole('writer');
+        $this->assertTrue($user->hasRole('writer'));
+    }
+
     /**
      * A basic feature test example.
      */
     public function test_user_can_create_article(): void
     {
         $user = User::factory()->create();
+        $user->assignRole('writer');
 
         $data = [
             'title' => 'Article One',
@@ -37,7 +53,7 @@ class ArticleTest extends TestCase
     public function test_user_cannot_create_article_with_invalid_data(): void
     {
         $user = User::factory()->create();
-
+        $user->assignRole('writer');
         $data = [
             'title' => 'Article One',
             'body' => 'test content',
@@ -62,7 +78,7 @@ class ArticleTest extends TestCase
 
         // ساخت کاربر تست و بدون هیچ مقاله‌ای برای خودش
         $user = User::factory()->create();
-
+        $user->assignRole('writer');
         // احراز هویت و ارسال درخواست
         $this->actingAs($user, 'sanctum')
             ->getJson(route('api.v1.articles.index'))
@@ -74,7 +90,7 @@ class ArticleTest extends TestCase
     {
         // ساخت کاربر تست
         $user = User::factory()->create();
-
+        $user->assignRole('writer');
         // ساخت مقالات برای کاربر تست
         Article::factory(5)->create([
             'author_uuid' => $user->uuid,
@@ -99,6 +115,7 @@ class ArticleTest extends TestCase
     public function test_user_can_update_self_article(): void
     {
         $user = User::factory()->create();
+        $user->assignRole('writer');
         $article = Article::factory(1)->createOne([
             'slug' => 'article-one',
         ]);
@@ -124,6 +141,7 @@ class ArticleTest extends TestCase
     public function test_user_cannot_update_other_article(): void
     {
         $user = User::factory()->create();
+        $user->assignRole('writer');
         $article = Article::factory()->createOne();
 
         $userOther = User::factory()->create();
@@ -136,6 +154,7 @@ class ArticleTest extends TestCase
     public function test_user_can_see_article(): void
     {
         $user = User::factory()->create();
+        $user->assignRole('writer');
         $article = Article::factory()->createOne();
 
         $this->actingAs($user, 'sanctum')
@@ -147,6 +166,7 @@ class ArticleTest extends TestCase
     public function test_user_can_delete_self_article(): void
     {
         $user = User::factory()->create();
+        $user->assignRole('writer');
         $article = Article::factory()->createOne();
 
         $this->actingAs($user, 'sanctum')
@@ -158,6 +178,7 @@ class ArticleTest extends TestCase
     public function test_user_cannot_delete_other_article(): void
     {
         $user = User::factory()->create();
+        $user->assignRole('writer');
         $article = Article::factory()->createOne();
 
         $userOther = User::factory()->create();
