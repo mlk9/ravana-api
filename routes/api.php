@@ -30,6 +30,8 @@ Route::prefix('v1/panel')->name('api.v1.panel.')->middleware(['auth:sanctum','th
     Route::apiResource('articles', ArticleController::class);
     //category
     Route::apiResource('categories', \App\Http\Controllers\Panel\CategoryController::class);
+    //roles
+    Route::apiResource('roles', \App\Http\Controllers\Panel\RoleController::class);
 });
 
 
