@@ -26,6 +26,12 @@ class PermissionSeeder extends Seeder
             'categories.edit',
             'categories.show',
             'categories.destroy',
+
+            'comments.index',
+            'comments.edit',
+            'comments.show',
+            'comments.destroy',
+            'comments.answer',
         ];
 
         $all = [
@@ -38,7 +44,8 @@ class PermissionSeeder extends Seeder
             'roles.destroy',
 
             'articles.control-other',
-            'categories.control-other'
+            'categories.control-other',
+            'comments.control-other',
         ];
 
         $roles = [

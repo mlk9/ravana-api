@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Models\Article;
 use App\Models\Category;
+use App\Models\Comment;
 use App\Policies\ArticlePolicy;
 use App\Policies\CategoryPolicy;
+use App\Policies\CommentPolicy;
 use App\Policies\RolePolicy;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -35,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Article::class, ArticlePolicy::class);
         Gate::policy(Category::class, CategoryPolicy::class);
         Gate::policy(Role::class, RolePolicy::class);
+        Gate::policy(Comment::class, CommentPolicy::class);
 
         RateLimiter::for('api', function (Request $request) {
             if ($request->user()) {

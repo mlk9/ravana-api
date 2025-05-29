@@ -26,7 +26,7 @@ class RoleTest extends TestCase
      */
     public function test_user_can_create_role(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->createOne();
         $user->assignRole('ceo');
 
         $data = [
@@ -50,7 +50,7 @@ class RoleTest extends TestCase
 
     public function test_user_cannot_create_role_with_duplicate_name(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->createOne();
         $user->assignRole('ceo');
 
         $data = [
@@ -79,7 +79,7 @@ class RoleTest extends TestCase
 
     public function test_user_cannot_create_role_with_unknown_permission(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->createOne();
         $user->assignRole('ceo');
 
         $data = [
@@ -112,7 +112,7 @@ class RoleTest extends TestCase
 
     public function test_user_can_update_role(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->createOne();
         $user->assignRole('ceo');
 
         $data = [
@@ -148,7 +148,7 @@ class RoleTest extends TestCase
 
     public function test_user_can_delete_roles(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->createOne();
         $user->assignRole('ceo');
 
         $data = [
@@ -176,8 +176,7 @@ class RoleTest extends TestCase
     }
     public function test_other_user_cannot_any_access_roles(): void
     {
-        $user = User::factory()->create();
-        $user->assignRole('writer');
+        $user = User::factory()->createOne();
 
         $this->actingAs($user, 'sanctum')
             ->getJson(route('api.v1.panel.roles.index'), [])

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->name('api.v1.')->middleware(['throttle:api'])->group(function (){
     Route::apiResource('articles', \App\Http\Controllers\ArticleController::class)->only(['index', 'show']);
     Route::apiResource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'show']);
+    Route::apiResource('comments', \App\Http\Controllers\CommentController::class)->only(['index', 'show', 'store']);
 });
 
 Route::prefix('v1')->name('api.v1.')->middleware(['guest','throttle:api'])->group(function (){
@@ -32,6 +33,9 @@ Route::prefix('v1/panel')->name('api.v1.panel.')->middleware(['auth:sanctum','th
     Route::apiResource('categories', \App\Http\Controllers\Panel\CategoryController::class);
     //roles
     Route::apiResource('roles', \App\Http\Controllers\Panel\RoleController::class);
+
+    Route::post('comments/{comment}/answer', [\App\Http\Controllers\Panel\CommentController::class, 'answer'])->name('comments.answer');
+    Route::apiResource('comments', \App\Http\Controllers\Panel\CommentController::class);
 });
 
 
