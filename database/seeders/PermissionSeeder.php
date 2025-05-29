@@ -30,7 +30,15 @@ class PermissionSeeder extends Seeder
 
         $all = [
             ...$writer,
-            'articles.control-other'
+
+            'roles.index',
+            'roles.create',
+            'roles.edit',
+            'roles.show',
+            'roles.destroy',
+
+            'articles.control-other',
+            'categories.control-other'
         ];
 
         $roles = [
