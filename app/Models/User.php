@@ -62,8 +62,13 @@ class User extends Authenticatable
         return $this->hasMany(Article::class,'author_uuid');
     }
 
-    public function comments() : MorphMany
+    public function comments() : HasMany
     {
-        return $this->morphMany(Comment::class, 'commentable');
+        return $this->hasMany(Comment::class, 'user_uuid');
+    }
+
+    public function bookmarks() : HasMany
+    {
+        return $this->hasMany(Bookmark::class,'user_uuid');
     }
 }
