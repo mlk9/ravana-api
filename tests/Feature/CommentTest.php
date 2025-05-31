@@ -196,14 +196,14 @@ class CommentTest extends TestCase
     {
         $user = User::factory()->createOne();
 
-        $comment = Comment::factory()->createOne();
+        $comment = Comment::factory()->forArticle()->createOne();
 
         $this->actingAs($user, 'sanctum')
             ->getJson(route('api.v1.panel.comments.index'), [])
             ->assertStatus(403);
 
         $this->actingAs($user, 'sanctum')
-            ->postJson(route('api.v1.panel.comments.store'), [])
+            ->deleteJson(route('api.v1.panel.comments.show',$comment))
             ->assertStatus(403);
 
         $this->actingAs($user, 'sanctum')
@@ -215,7 +215,10 @@ class CommentTest extends TestCase
             ->assertStatus(403);
 
         $this->actingAs($user, 'sanctum')
-            ->postJson(route('api.v1.panel.comments.answer',$comment), [])
+            ->postJson(route('api.v1.panel.comments.answer',$comment), [
+                'status' => 'approved',
+                'answer' => 'test answer'
+            ])
             ->assertStatus(403);
     }
 

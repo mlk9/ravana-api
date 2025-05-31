@@ -54,7 +54,7 @@ class CommentController extends Controller
     public function show(Request $request,string $uuid): JsonResponse
     {
         $comment = Comment::query()->where('uuid', $uuid)->firstOrFail();
-        Gate::authorize('view', [$request->user(),$comment]);
+        Gate::authorize('view', $comment);
         return $this->success(['data' => $comment->toArray()]);
     }
 
@@ -64,7 +64,7 @@ class CommentController extends Controller
     public function update(Request $request, string $uuid): JsonResponse
     {
         $comment = Comment::query()->where('uuid', $uuid)->firstOrFail();
-        Gate::authorize('update', [$request->user(),$comment]);
+        Gate::authorize('update', $comment);
 
         $request->validate([
             'text' => ['nullable', 'string', 'min:3'],
@@ -95,7 +95,7 @@ class CommentController extends Controller
     public function destroy(Request $request,string $uuid): JsonResponse
     {
         $comment = Comment::query()->where('uuid', $uuid)->firstOrFail();
-        Gate::authorize('delete', [$request->user(),$comment]);
+        Gate::authorize('delete', $comment);
         $res = $comment->delete();
 
         return $res ? $this->success() : $this->error();
@@ -110,7 +110,7 @@ class CommentController extends Controller
 
         $comment = Comment::query()->where('uuid', $uuid)->firstOrFail();
 
-        Gate::authorize('answer', [$request->user(),$comment]);
+        Gate::authorize('answer', $comment);
 
         $status = $request->input('status', 'pending');
         $res = $comment->update([
