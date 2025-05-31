@@ -43,6 +43,12 @@ class PermissionSeeder extends Seeder
             'roles.show',
             'roles.destroy',
 
+            'users.index',
+            'users.create',
+            'users.edit',
+            'users.show',
+            'users.destroy',
+
             'articles.control-other',
             'categories.control-other',
             'comments.control-other',
