@@ -151,4 +151,21 @@ class UserTest extends TestCase
             'uuid' => $otherUser->uuid,
         ]);
     }
+
+    public function test_user_can_suspended_user(): void
+    {
+        $user = User::factory()->createOne();
+        $user->assignRole('ceo');
+
+        $otherUser = User::factory()->createOne();
+
+        $data = [
+            'suspend' => '1',
+        ];
+
+        $this->actingAs($user, 'sanctum')
+            ->putJson(route('api.v1.panel.users.update', $otherUser), $data)
+            ->assertStatus(200)
+            ->assertJsonStructure(['data']);
+    }
 }

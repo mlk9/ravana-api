@@ -60,6 +60,7 @@ class UserController extends Controller
                 ->symbols()       // شامل نمادها باشد
                 ->uncompromised() // در دیتابیس رمزهای لو رفته نباشد
             ],
+            'suspend' => ['nullable', 'boolean'],
             'roles' => ['nullable', 'array'],
             'roles.*' => ['exists:roles,name'],
             'permissions' => ['nullable', 'array'],
@@ -68,6 +69,7 @@ class UserController extends Controller
 
         $data['password'] = Hash::make($request->input('password'));
         $data['email_verified_at'] = $request->input('email_verify',false) == true ? now() : null;
+        $data['suspended_at'] = $request->input('suspend',false) == true ? now() : null;
 
         $user = User::query()->create($data);
 
@@ -109,6 +111,7 @@ class UserController extends Controller
                 ->symbols()       // شامل نمادها باشد
                 ->uncompromised() // در دیتابیس رمزهای لو رفته نباشد
             ],
+            'suspend' => ['nullable', 'boolean'],
             'roles' => ['nullable', 'array'],
             'roles.*' => ['exists:roles,name'],
             'permissions' => ['nullable', 'array'],
@@ -133,6 +136,7 @@ class UserController extends Controller
             'last_name' => $request->input('last_name',$user->last_name),
             'email' => $request->input('email',$user->email),
             'email_verified_at' => $request->input('email_verify',false) == true ? now() : null,
+            'suspended_at' => $request->input('suspend',false) == true ? now() : null,
             'password' => $request->has('password') ? Hash::make($request->input('password')) : $user->password,
         ]);
 

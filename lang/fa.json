@@ -1155,5 +1155,6 @@
     "Zip / Postal Code": "کدپستی",
     "Åland Islands": "جزایر الند",
     "The provided token is invalid. Please ensure the information you entered is correct.": "توکن واردشده نامعتبر است. لطفاً از صحت اطلاعات واردشده اطمینان حاصل فرمایید.",
-    "You are not authorized to access this data.": "شما مجاز به دسترسی به این داده نمی\u200Cباشید."
+    "You are not authorized to access this data.": "شما مجاز به دسترسی به این داده نمی\u200Cباشید.",
+    "Your account has been suspended due to imposed restrictions. Please contact support for further information.": "حساب کاربری شما به دلیل محدودیت\u200Cهای اعمال\u200Cشده، در حال حاضر معلق است. لطفاً برای اطلاعات بیشتر با پشتیبانی تماس بگیرید."
 }

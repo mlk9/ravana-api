@@ -10,7 +10,7 @@ Route::prefix('v1')->name('api.v1.')->middleware(['throttle:api'])->group(functi
     Route::apiResource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'show']);
 });
 
-Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum','throttle:api'])->group(function (){
+Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum','throttle:api', \App\Http\Middleware\CheckUserSuspended::class])->group(function (){
     Route::apiResource('comments', \App\Http\Controllers\CommentController::class)->only(['index', 'show', 'store']);
     Route::post('bookmarks/sync', [\App\Http\Controllers\BookmarkController::class, 'sync'])->name('bookmarks.sync');
     Route::get('bookmarks', [\App\Http\Controllers\BookmarkController::class, 'index'])->name('bookmarks.index');
@@ -26,7 +26,7 @@ Route::prefix('v1')->name('api.v1.')->middleware(['guest','throttle:api'])->grou
     });
 });
 
-Route::prefix('v1/panel')->name('api.v1.panel.')->middleware(['auth:sanctum','throttle:api'])->group(function (){
+Route::prefix('v1/panel')->name('api.v1.panel.')->middleware(['auth:sanctum','throttle:api', \App\Http\Middleware\CheckUserSuspended::class])->group(function (){
     //auth
     Route::prefix('auth')->name('auth.')->group(function () {
         Route::get('/profile', [\App\Http\Controllers\Panel\AuthController::class, 'profile'])->name('profile.show');

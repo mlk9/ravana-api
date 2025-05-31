@@ -30,6 +30,7 @@ class User extends Authenticatable
         'last_name',
         'email',
         'password',
+        'suspended_at'
     ];
 
     /**
@@ -41,6 +42,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'is_superuser',
+        'suspended_at'
     ];
 
     /**
@@ -53,7 +55,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_superuser' => 'boolean'
+            'is_superuser' => 'boolean',
+            'suspended_at' => 'datetime',
         ];
     }
 

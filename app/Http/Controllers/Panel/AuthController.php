@@ -49,6 +49,16 @@ class AuthController extends Controller
         $user = User::query()->where('email', $request->input('email'))->first();
         if ($user) {
             if (Hash::check($request->input('password'), $user->password)) {
+
+                if($user->suspended_at)
+                {
+                    return $this->error([
+                        'message' => __('Your account has been suspended due to imposed restrictions. Please contact support for further information.'),
+                        'errors' => ['email' => __('Your account has been suspended due to imposed restrictions. Please contact support for further information.')],
+                        'code' => 403
+                    ]);
+                }
+
                 return $this->success([
                     'data' => [
                         'user' => $user,
