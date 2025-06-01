@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->name('api.v1.')->middleware(['throttle:api'])->group(function (){
     Route::apiResource('articles', \App\Http\Controllers\ArticleController::class)->only(['index', 'show']);
     Route::apiResource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'show']);
+    Route::get('articles/{article:uuid}/comments', [\App\Http\Controllers\CommentController::class,'article'])->name('comments.article');
 });
 
 Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum','throttle:api', \App\Http\Middleware\CheckUserSuspended::class])->group(function (){

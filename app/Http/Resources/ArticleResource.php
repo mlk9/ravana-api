@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Bookmark;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,6 +16,14 @@ class ArticleResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $is_bookmark = false;
+        if ($request->user()) {
+            $is_bookmark = Bookmark::query()
+                ->where('bookmark_able_id', $this->uuid)
+                ->where('bookmark_able_type', 'App\Models\Article')
+                ->where('user_uuid', $request->user()->uuid)->exists();
+        }
+
         return [
             'uuid' => $this->uuid,
             'title' => $this->title,
@@ -21,6 +31,8 @@ class ArticleResource extends JsonResource
             'tags' => $this->tags,
             'body' => $this->body,
             'published_at' => $this->published_at->toDateTimeString(),
+
+            'is_bookmark' => $is_bookmark,
 
             // Category info
             'category' => [
@@ -36,6 +48,7 @@ class ArticleResource extends JsonResource
                 'last_name' => $this->author?->last_name,
                 'email' => $this->author?->email,
             ],
+
         ];
     }
 }

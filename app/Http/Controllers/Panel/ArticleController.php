@@ -27,7 +27,7 @@ class ArticleController extends Controller
             'dir' => ['nullable', 'in:asc,desc']
         ]);
 
-        $articles = Article::query()
+        $articles = Article::query()->with(['author', 'categories'])
             ->where('author_uuid', Auth::user()->uuid);
 
         if ($request->filled('status')) {
@@ -79,7 +79,7 @@ class ArticleController extends Controller
             'categories' => ['nullable', 'array' , 'exists:categories,uuid']
         ]);
 
-        $article = Article::query()->where('uuid', $uuid)->first();
+        $article = Article::query()->with(['author', 'categories'])->where('uuid', $uuid)->first();
 
         if($request->filled('categories'))
         {
@@ -106,7 +106,7 @@ class ArticleController extends Controller
 
     public function show(Request $request, $uuid): JsonResponse
     {
-        $article = Article::query()->where('uuid', $uuid)->first();
+        $article = Article::query()->with(['author', 'categories'])->where('uuid', $uuid)->first();
         if (is_null($article)) {
             return $this->error([
                 'message' => __('Not Found'),

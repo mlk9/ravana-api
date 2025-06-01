@@ -24,7 +24,7 @@ class ArticleController extends Controller
             'dir' => ['nullable', 'in:asc,desc']
         ]);
 
-        $articles = Article::query()
+        $articles = Article::query()->with(['author', 'categories'])
             ->where('status', 'published')
             ->where('published_at', '<=', now());
 
@@ -43,6 +43,7 @@ class ArticleController extends Controller
     public function show(string $uuid) : JsonResponse
     {
         $article = Article::query()
+            ->with(['author', 'categories'])
             ->where('uuid', $uuid)
             ->where('status', 'published')
             ->where('published_at', '<=', now())

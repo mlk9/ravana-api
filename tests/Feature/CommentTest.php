@@ -222,4 +222,22 @@ class CommentTest extends TestCase
             ->assertStatus(403);
     }
 
+    public function test_user_can_see_article_comments(): void
+    {
+        $user = User::factory()->createOne();
+        $article = Article::factory()->createOne();
+
+        $comments = Comment::factory(10)->forArticle()->create([
+            'status' => 'approved',
+        ]);
+
+        Comment::factory(3)->forArticle()->create([
+            'parent_uuid' => $comments->first()->uuid,
+        ]);
+
+        $this->actingAs($user, 'sanctum')
+            ->getJson(route('api.v1.comments.article',$article))
+            ->assertStatus(200)
+            ->assertJsonCount(10, 'data.data');
+    }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CommentCollection;
+use App\Http\Resources\CommentResource;
 use App\Models\Article;
 use App\Models\Comment;
 use App\Traits\ApiResponse;
@@ -71,6 +73,18 @@ class CommentController extends Controller
                     ->firstOrFail();
 
         return $this->success(['data' => $comment->toArray()]);
+    }
+
+    public function article(Request $request, string $uuid): JsonResponse
+    {
+        $comments = Comment::query()
+            ->where('commentable_id', $uuid)
+            ->where('commentable_type', Article::class)
+            ->where('status', 'approved')
+            ->whereNull('parent_uuid')
+            ->paginate($request->input('per_page', 25), ['*'], 'page', $request->input('page', 1));
+
+            return $this->success(['data' => new CommentCollection($comments)]);
     }
 
 }

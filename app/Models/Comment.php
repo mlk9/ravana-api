@@ -20,6 +20,7 @@ class Comment extends Model
     protected $keyType = 'uuid';
 
     protected $fillable = [
+        'uuid',
         'text',
         'rate',
         'status',
