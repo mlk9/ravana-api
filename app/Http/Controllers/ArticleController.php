@@ -70,6 +70,8 @@ class ArticleController extends Controller
     {
         $request->validate([
             'search' => ['nullable', 'string', 'min:3'],
+            'category' => ['nullable', 'string', 'exists:categories,slug'],
+            'category_uuid' => ['nullable', 'string', 'exists:categories,uuid'],
             'order' => ['nullable', 'in:title,published_at,created_at'],
             'dir' => ['nullable', 'in:asc,desc']
         ]);
@@ -80,6 +82,18 @@ class ArticleController extends Controller
 
         if ($request->filled('search')) {
             $articles->whereLike('title', '%'.$request->input('search').'%');
+        }
+
+        if ($request->filled('category')) {
+            $articles->whereHas('categories', function ($query) use ($request){
+                $query->where('slug', $request->input('category'));
+            });
+        }
+
+        if ($request->filled('category_uuid')) {
+            $articles->whereHas('categories', function ($query) use ($request){
+                $query->where('uuid', $request->input('category_uuid'));
+            });
         }
 
         if ($request->filled('dir') && $request->filled('order')) {

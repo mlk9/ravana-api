@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CategoryCollection;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -35,7 +37,7 @@ class CategoryController extends Controller
         $categories = $categories
             ->paginate($request->input('per_page', 25), ['*'], 'page', $request->input('page', 1));
 
-        return $this->success(['data' => $categories->toArray()]);
+        return $this->success(['data' => new CategoryCollection($categories)]);
     }
 
     /**
@@ -44,7 +46,7 @@ class CategoryController extends Controller
     public function show(string $slug) : JsonResponse
     {
         $category = Category::query()->where('slug', $slug)->firstOrFail();
-        return $this->success(['data' => $category->toArray()]);
+        return $this->success(['data' => new CategoryResource($category)]);
     }
 
 
