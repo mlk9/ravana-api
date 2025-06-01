@@ -94,20 +94,14 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $uuid) : JsonResponse
+    public function show(string $slug) : JsonResponse
     {
         $article = Article::query()
             ->with(['author', 'categories'])
-            ->where('uuid', $uuid)
+            ->where('slug', $slug)
             ->where('status', 'published')
             ->where('published_at', '<=', now())
-            ->first();
-        if (is_null($article)) {
-            return $this->error([
-                'message' => __('Not Found'),
-                'code' => 404
-            ]);
-        }
+            ->firstOrFail();
         return $this->success(['data' => new ArticleResource($article)]);
     }
 

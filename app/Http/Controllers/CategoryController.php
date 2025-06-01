@@ -41,17 +41,9 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $uuid) : JsonResponse
+    public function show(string $slug) : JsonResponse
     {
-        $category = Category::query()->where('uuid', $uuid)->first();
-
-        if (is_null($category)) {
-            return $this->error([
-                'message' => __('Not Found'),
-                'code' => 404
-            ]);
-        }
-
+        $category = Category::query()->where('slug', $slug)->firstOrFail();
         return $this->success(['data' => $category->toArray()]);
     }
 

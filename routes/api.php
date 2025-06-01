@@ -6,8 +6,19 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::prefix('v1')->name('api.v1.')->middleware(['throttle:api'])->group(function (){
-    Route::apiResource('articles', \App\Http\Controllers\ArticleController::class)->only(['index', 'show']);
-    Route::apiResource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'show']);
+
+    Route::get('articles', [\App\Http\Controllers\ArticleController::class, 'index'])
+        ->name('articles.index');
+
+    Route::get('articles/{article:slug}', [\App\Http\Controllers\ArticleController::class, 'show'])
+        ->name('articles.show');
+
+    Route::get('categories', [\App\Http\Controllers\CategoryController::class, 'index'])
+        ->name('categories.index');
+
+    Route::get('categories/{category:slug}', [\App\Http\Controllers\CategoryController::class, 'show'])
+        ->name('categories.show');
+
     Route::get('articles/{article:uuid}/comments', [\App\Http\Controllers\CommentController::class,'article'])->name('comments.article');
 });
 
