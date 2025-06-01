@@ -1,0 +1,172 @@
+name: Articles
+description: |-
+  Retrieve a list of published articles with optional search and sorting.
+  Articles are filtered to only include those with `published` status and a `published_at` date not in the future.
+endpoints:
+  -
+    httpMethods:
+      - GET
+    uri: api/v1/articles
+    metadata:
+      groupName: Articles
+      groupDescription: |-
+        Retrieve a list of published articles with optional search and sorting.
+        Articles are filtered to only include those with `published` status and a `published_at` date not in the future.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get a paginated list of published articles'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      search:
+        name: search
+        description: 'Optional. A search term to filter articles by title. Minimum 3 characters.'
+        required: false
+        example: Laravel
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      order:
+        name: order
+        description: 'Optional. Field to sort by. Allowed values: title, published_at, created_at.'
+        required: false
+        example: published_at
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      dir:
+        name: dir
+        description: 'Optional. Sort direction. Allowed values: asc, desc.'
+        required: false
+        example: desc
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      per_page:
+        name: per_page
+        description: 'Optional. Number of items per page. Default is 25.'
+        required: false
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      page:
+        name: page
+        description: 'Optional. The page number to return. Default is 1.'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanQueryParameters:
+      search: Laravel
+      order: published_at
+      dir: desc
+      per_page: 10
+      page: 2
+    bodyParameters:
+      search:
+        name: search
+        description: 'گزینه value باید حداقل 3 کاراکتر باشد.'
+        required: false
+        example: vmqeopfuudtdsufvyvddqamniihfqcoynlazghdtqtqxbajwbpilpmufinllwloauydlsmsjur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        custom: []
+      order:
+        name: order
+        description: ''
+        required: false
+        example: published_at
+        type: string
+        enumValues:
+          - title
+          - published_at
+          - created_at
+        exampleWasSpecified: false
+        nullable: true
+        custom: []
+      dir:
+        name: dir
+        description: ''
+        required: false
+        example: asc
+        type: string
+        enumValues:
+          - asc
+          - desc
+        exampleWasSpecified: false
+        nullable: true
+        custom: []
+    cleanBodyParameters:
+      search: vmqeopfuudtdsufvyvddqamniihfqcoynlazghdtqtqxbajwbpilpmufinllwloauydlsmsjur
+      order: published_at
+      dir: asc
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "data": {
+              "data": [
+                {
+                  "uuid": "abc123",
+                  "title": "Article Title",
+                  "body": "Article content...",
+                  "published_at": "2025-06-01T12:00:00Z",
+                  "author": {
+                    "id": 1,
+                    "name": "John Doe"
+                  },
+                  "categories": [
+                    {
+                      "id": 2,
+                      "name": "Tech"
+                    }
+                  ]
+                }
+              ],
+              "links": {
+                "first": "...",
+                "last": "...",
+                "prev": null,
+                "next": "..."
+              },
+              "meta": {
+                "current_page": 1,
+                "from": 1,
+                "last_page": 3,
+                "per_page": 10,
+                "to": 10,
+                "total": 30
+              }
+            }
+          }
+        headers: []
+        description: success
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
