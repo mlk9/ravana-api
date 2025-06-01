@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Panel;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ArticleCollection;
+use App\Http\Resources\ArticleResource;
 use App\Models\Article;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -38,7 +40,7 @@ class ArticleController extends Controller
 
         $articles = $articles->paginate($request->input('per_page', 25), ['*'], 'page', $request->input('page', 1));
 
-        return $this->success(['data' => $articles->toArray()]);
+        return $this->success(['data' => new ArticleCollection($articles)]);
     }
 
     public function store(Request $request): JsonResponse
@@ -61,7 +63,7 @@ class ArticleController extends Controller
             $article->categories()->attach($request->input('categories'));
         }
 
-        return $this->success(['data' => $article->toArray(), 'code' => 201]);
+        return $this->success(['data' => new ArticleResource($article), 'code' => 201]);
     }
 
     public function update(Request $request, $uuid): JsonResponse
@@ -98,7 +100,7 @@ class ArticleController extends Controller
 
         $article->refresh();
 
-        return $this->success(['data' => $article->toArray()]);
+        return $this->success(['data' => new ArticleResource($article)]);
 
     }
 
@@ -112,7 +114,7 @@ class ArticleController extends Controller
             ]);
         }
         Gate::authorize('view', $article);
-        return $this->success(['data' => $article->toArray()]);
+        return $this->success(['data' => new ArticleResource($article)]);
     }
 
     public function destroy(Request $request, $uuid): JsonResponse

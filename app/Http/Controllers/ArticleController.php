@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ArticleCollection;
+use App\Http\Resources\ArticleResource;
 use App\Models\Article;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -32,7 +34,7 @@ class ArticleController extends Controller
 
         $articles = $articles->paginate($request->input('per_page', 25), ['*'], 'page', $request->input('page', 1));
 
-        return $this->success(['data' => $articles->toArray()]);
+        return $this->success(['data' => new ArticleCollection($articles)]);
     }
 
     /**
@@ -51,7 +53,7 @@ class ArticleController extends Controller
                 'code' => 404
             ]);
         }
-        return $this->success(['data' => $article->toArray()]);
+        return $this->success(['data' => new ArticleResource($article)]);
     }
 
 }

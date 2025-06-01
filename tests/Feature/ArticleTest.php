@@ -47,10 +47,11 @@ class ArticleTest extends TestCase
             'published_at' => now()->timestamp
         ];
 
-        $this->actingAs($user, 'sanctum')
+        $data = $this->actingAs($user, 'sanctum')
             ->postJson(route('api.v1.panel.articles.store'), $data)
             ->assertStatus(201)
             ->assertJsonStructure(['data']);
+
     }
 
     public function test_user_cannot_create_article_with_invalid_data(): void
@@ -84,12 +85,12 @@ class ArticleTest extends TestCase
     public function test_normal_user_can_see_published_articles(): void
     {
         $user = User::factory()->create();
-        Article::factory(5)->create(['status' => 'draft']);
+        Article::factory(5)->create(['status' => 'published']);
 
-        $this->actingAs($user, 'sanctum')
+        $res = $this->actingAs($user, 'sanctum')
             ->getJson(route('api.v1.panel.articles.index', ['status' => 'published']))
             ->assertStatus(200)
-            ->assertJsonCount(0, 'data.data'); // چون مقاله‌ای نداره، انتظار داریم خروجی صفر باشه
+            ->assertJsonCount(5, 'data.data'); // چون مقاله‌ای نداره، انتظار داریم خروجی صفر باشه
     }
 
     public function test_user_cannot_see_other_articles(): void

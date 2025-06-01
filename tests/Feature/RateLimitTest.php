@@ -14,7 +14,7 @@ class RateLimitTest extends TestCase
     public function test_rate_limiting_blocks_excessive_requests()
     {
         // فرض کنیم محدودیت ۵ درخواست در دقیقه است
-        for ($i = 0; $i < 25; $i++) {
+        for ($i = 0; $i < 60; $i++) {
             $response = $this->getJson(route('api.v1.articles.index'))->assertStatus(200);
         }
 
@@ -27,7 +27,7 @@ class RateLimitTest extends TestCase
         $user = User::factory()->createOne();
 
         // فرض کنیم محدودیت ۵ درخواست در دقیقه است
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             $response = $this->actingAs($user,'sanctum')->getJson(route('api.v1.articles.index'))->assertStatus(200);
         }
 
