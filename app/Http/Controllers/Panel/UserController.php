@@ -32,6 +32,14 @@ class UserController extends Controller
 
         $users = User::query();
 
+        if ($request->filled('search')) {
+            $users->whereHas(function ($query) use($request){
+                $query->orWhereLike('first_name', '%'.$request->input('search').'%')
+                    ->orWhereLike('last_name', '%'.$request->input('search').'%')
+                    ->orWhereLike('email', '%'.$request->input('search').'%');
+            });
+        }
+
         if ($request->filled('dir') && $request->filled('order')) {
             $users->orderBy($request->input('order'), $request->input('dir'));
         }

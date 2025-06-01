@@ -22,6 +22,7 @@ class ArticleController extends Controller
         Gate::authorize('viewAny', [Article::class, $request->input('status')]);
 
         $request->validate([
+            'search' => ['nullable', 'string', 'min:3'],
             'status' => ['nullable', 'in:draft,archived,published'],
             'order' => ['nullable', 'in:title,published_at,created_at'],
             'dir' => ['nullable', 'in:asc,desc']
@@ -29,6 +30,10 @@ class ArticleController extends Controller
 
         $articles = Article::query()->with(['author', 'categories'])
             ->where('author_uuid', Auth::user()->uuid);
+
+        if ($request->filled('search')) {
+            $articles->whereLike('title', '%'.$request->input('search').'%');
+        }
 
         if ($request->filled('status')) {
             $articles->where('status', $request->input('status'));

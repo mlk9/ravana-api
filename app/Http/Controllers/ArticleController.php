@@ -20,6 +20,7 @@ class ArticleController extends Controller
     public function index(Request $request) : JsonResponse
     {
         $request->validate([
+            'search' => ['nullable', 'string', 'min:3'],
             'order' => ['nullable', 'in:title,published_at,created_at'],
             'dir' => ['nullable', 'in:asc,desc']
         ]);
@@ -27,6 +28,10 @@ class ArticleController extends Controller
         $articles = Article::query()->with(['author', 'categories'])
             ->where('status', 'published')
             ->where('published_at', '<=', now());
+
+        if ($request->filled('search')) {
+            $articles->whereLike('title', '%'.$request->input('search').'%');
+        }
 
         if ($request->filled('dir') && $request->filled('order')) {
             $articles->orderBy($request->input('order'), $request->input('dir'));

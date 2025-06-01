@@ -25,6 +25,7 @@ class CategoryController extends Controller
         Gate::authorize('viewAny', [Category::class]);
 
         $request->validate([
+            'search' => ['nullable','string', 'min:3'],
 //            'status' => ['nullable', 'in:draft,archived,published'],
             'order' => ['nullable', 'in:name,created_at'],
             'dir' => ['nullable', 'in:asc,desc']
@@ -32,10 +33,10 @@ class CategoryController extends Controller
 
         $categories = Category::query()
             ->where('creator_uuid', Auth::user()->uuid);
-//
-//        if ($request->filled('status')) {
-//            $articles->where('status', $request->input('status'));
-//        }
+
+        if ($request->filled('search')) {
+            $categories->whereLike('name',  '%'.$request->input('search').'%');
+        }
 
         if ($request->filled('dir') && $request->filled('order')) {
             $categories->orderBy($request->input('order'), $request->input('dir'));
