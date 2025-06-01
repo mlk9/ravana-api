@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Panel;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -33,7 +34,7 @@ class AuthController extends Controller
 
         return $this->success([
             'data' => [
-                'user' => $user,
+                'user' => new UserResource($user),
                 'token' => $user->createToken('First Api')->plainTextToken
             ],
             'code' => 201
@@ -61,7 +62,7 @@ class AuthController extends Controller
 
                 return $this->success([
                     'data' => [
-                        'user' => $user,
+                        'user' => new UserResource($user),
                         'token' => $user->createToken('First Api')->plainTextToken
                     ],
                     'code' => 200
@@ -119,7 +120,7 @@ class AuthController extends Controller
 
     public function profile(Request $request): JsonResponse
     {
-        return $this->success(['data' => $request->user()->toArray()]);
+        return $this->success(['data' => new UserResource($request->user())]);
     }
 
     public function profile_update(Request $request): JsonResponse
@@ -143,7 +144,7 @@ class AuthController extends Controller
         }
         $res = $user->update($validated);
         if ($res) {
-            return $this->success(['data' => $request->user()->toArray()]);
+            return $this->success(['data' => new UserResource($user)]);
         } else {
             return $this->error();
         }
