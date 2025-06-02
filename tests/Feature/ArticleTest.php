@@ -85,10 +85,10 @@ class ArticleTest extends TestCase
     public function test_normal_user_can_see_published_articles(): void
     {
         $user = User::factory()->create();
-        Article::factory(5)->create(['status' => 'published']);
+        Article::factory(5)->create(['status' => 'published', 'published_at' => now()]);
 
         $res = $this->actingAs($user, 'sanctum')
-            ->getJson(route('api.v1.panel.articles.index', ['status' => 'published']))
+            ->getJson(route('api.v1.articles.index'))
             ->assertStatus(200)
             ->assertJsonCount(5, 'data.data'); // چون مقاله‌ای نداره، انتظار داریم خروجی صفر باشه
     }
