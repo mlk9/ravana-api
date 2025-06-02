@@ -110,10 +110,6 @@ class ArticleController extends Controller
      */
     public function show(Request $request, string $slug) : JsonResponse
     {
-        $request->validate([
-            'slug' => ['required', 'string', 'min:3', 'max:250']
-        ]);
-
         $article = Article::query()
             ->with(['author', 'categories'])
             ->where('slug', $slug)

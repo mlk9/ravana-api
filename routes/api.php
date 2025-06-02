@@ -5,25 +5,22 @@ use App\Http\Controllers\Panel\ArticleController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::prefix('v1')->name('api.v1.')->middleware(['throttle:api'])->group(function (){
+Route::prefix('v1')->name('api.v1.')->middleware(['throttle:api','throttle:14,1'])->group(function (){
 
     Route::get('articles', [\App\Http\Controllers\ArticleController::class, 'index'])
-        ->middleware(['throttle:14,1'])
         ->name('articles.index');
 
     Route::get('articles/{article:slug}', [\App\Http\Controllers\ArticleController::class, 'show'])
-        ->middleware(['throttle:14,1'])
         ->name('articles.show');
 
     Route::get('categories', [\App\Http\Controllers\CategoryController::class, 'index'])
-        ->middleware(['throttle:14,1'])
         ->name('categories.index');
 
     Route::get('categories/{category:slug}', [\App\Http\Controllers\CategoryController::class, 'show'])
-        ->middleware(['throttle:14,1'])
         ->name('categories.show');
 
-    Route::get('articles/{article:uuid}/comments', [\App\Http\Controllers\CommentController::class,'article'])->middleware(['throttle:14,1'])->name('comments.article');
+    Route::get('articles/{article:uuid}/comments', [\App\Http\Controllers\CommentController::class,'article'])
+        ->name('comments.article');
 });
 
 Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum','throttle:api', \App\Http\Middleware\CheckUserSuspended::class])->group(function (){
@@ -44,7 +41,7 @@ Route::prefix('v1')->name('api.v1.')->middleware(['guest','throttle:api'])->grou
     });
 });
 
-Route::prefix('v1/panel')->name('api.v1.panel.')->middleware(['role:admin,writer','auth:sanctum','throttle:api', \App\Http\Middleware\CheckUserSuspended::class])->group(function (){
+Route::prefix('v1/panel')->name('api.v1.panel.')->middleware(['auth:sanctum','throttle:api', \App\Http\Middleware\CheckUserSuspended::class])->group(function (){
     //auth
     Route::prefix('auth')->name('auth.')->group(function () {
         Route::get('/profile', [\App\Http\Controllers\Panel\AuthController::class, 'profile'])->middleware(['throttle:25,1'])->name('profile.show');

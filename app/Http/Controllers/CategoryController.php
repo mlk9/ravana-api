@@ -45,9 +45,6 @@ class CategoryController extends Controller
      */
     public function show(Request $request,string $slug) : JsonResponse
     {
-        $request->validate([
-            'slug' => ['required', 'string', 'min:3', 'max:250']
-        ]);
         $category = Category::query()->where('slug', $slug)->firstOrFail();
         return $this->success(['data' => new CategoryResource($category)]);
     }
