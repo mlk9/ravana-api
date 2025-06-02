@@ -251,7 +251,7 @@ class ArticleTest extends TestCase
             ->assertStatus(201)
             ->assertJsonStructure(['data']);
 
-        $data['published_at'] = now();
+        $data['published_at'] = now()->format('Y-m-d\TH:i:s.u\Z');
 
         $this->assertDatabaseHas(Article::class, $data);
 
