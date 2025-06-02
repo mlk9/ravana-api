@@ -15,9 +15,9 @@ return new class extends Migration
             $table->uuid('uuid')->primary();
             $table->string('title');
             $table->json('thumbnail')->default(json_encode([
-                'sm' => '#',
-                'md' => '#',
-                'lg' => '#',
+                'original' => '#',
+                'preview' => '#',
+                'thumb' => '#',
             ]));
             $table->string('slug')->unique();
             $table->longText('body');

@@ -32,6 +32,9 @@ class PermissionSeeder extends Seeder
             'comments.show',
             'comments.destroy',
             'comments.answer',
+
+            'images.upload',
+            'images.delete',
         ];
 
         $all = [

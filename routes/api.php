@@ -60,6 +60,9 @@ Route::prefix('v1/panel')->name('api.v1.panel.')->middleware(['auth:sanctum', 't
         Route::apiResource('comments', \App\Http\Controllers\Panel\CommentController::class);
 
         Route::apiResource('users', \App\Http\Controllers\Panel\UserController::class);
+
+        Route::post('images/upload', [\App\Http\Controllers\Panel\ImageController::class, 'upload'])->name('images.upload');
+        Route::delete('images/delete', [\App\Http\Controllers\Panel\ImageController::class, 'delete'])->name('images.delete');
     });
 
 });

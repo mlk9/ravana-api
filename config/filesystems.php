@@ -60,6 +60,14 @@ return [
             'report' => false,
         ],
 
+        'uploads' => [
+            'driver' => 'local',
+            'root' => public_path('uploads'),
+            'url' => join('/',['uploads']),
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*

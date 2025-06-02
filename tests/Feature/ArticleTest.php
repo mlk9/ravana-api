@@ -283,4 +283,29 @@ class ArticleTest extends TestCase
     }
 
 
+    public function test_user_can_create_article_with_thumbnail(): void
+    {
+        $user = User::factory()->create();
+        $user->assignRole('writer');
+
+        $data = [
+            'title' => 'Article One',
+            'slug' => 'article-one',
+            'thumbnail' => [
+                'original' => 'x',
+                'preview' => 'x',
+                'thumb' => 'x',
+            ],
+            'body' => fake()->paragraph(5),
+            'tags' => 'tag1,tag2',
+            'status' => 'published',
+            'published_at' => now()->timestamp
+        ];
+
+        $data = $this->actingAs($user, 'sanctum')
+            ->postJson(route('api.v1.panel.articles.store'), $data)
+            ->assertStatus(201)
+            ->assertJsonStructure(['data']);
+
+    }
 }

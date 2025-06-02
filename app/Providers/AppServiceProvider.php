@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Policies\ArticlePolicy;
 use App\Policies\CategoryPolicy;
 use App\Policies\CommentPolicy;
+use App\Policies\ImagePolicy;
 use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -41,6 +42,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(Comment::class, CommentPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
+        Gate::define('image-upload', [ImagePolicy::class, 'upload']);
+        Gate::define('image-delete', [ImagePolicy::class, 'delete']);
 
         RateLimiter::for('api', function (Request $request) {
             if ($request->user()) {
