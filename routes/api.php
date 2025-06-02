@@ -31,13 +31,13 @@ Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum', 'throttle:api'
         ->name('me');
 });
 
-Route::prefix('v1')->name('api.v1.')->middleware(['guest', 'throttle:api'])->group(function () {
+Route::prefix('v1')->name('api.v1.')->middleware(['guest', 'throttle:api', 'throttle:10,1'])->group(function () {
     //auth
     Route::prefix('auth')->name('auth.')->group(function () {
-        Route::post('/register', [\App\Http\Controllers\Panel\AuthController::class, 'register'])->middleware('throttle:10,1')->name('register');
+        Route::post('/register', [\App\Http\Controllers\Panel\AuthController::class, 'register'])->name('register');
         Route::post('/login', [\App\Http\Controllers\Panel\AuthController::class, 'login'])->middleware('throttle:5,1')->name('login');
-        Route::post('/forgot', [\App\Http\Controllers\Panel\AuthController::class, 'forgot'])->middleware('throttle:10,1')->name('forgot');
-        Route::post('/forgot/change-password', [\App\Http\Controllers\Panel\AuthController::class, 'change_password'])->middleware('throttle:10,1')->name('forgot.change_password');
+        Route::post('/forgot', [\App\Http\Controllers\Panel\AuthController::class, 'forgot'])->name('forgot');
+        Route::post('/forgot/change-password', [\App\Http\Controllers\Panel\AuthController::class, 'change_password'])->name('forgot.change_password');
     });
 });
 
