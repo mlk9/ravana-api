@@ -169,4 +169,20 @@ class UserTest extends TestCase
             ->assertStatus(200)
             ->assertJsonStructure(['data']);
     }
+
+    public function test_user_can_see_me(): void
+    {
+        $user = User::factory()->createOne();
+        $user->assignRole('ceo');
+
+        $this->actingAs($user, 'sanctum')
+            ->getJson(route('api.v1.me'))
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                'data' => [
+                    'first_name',
+                    'roles' => [0]
+                ]
+            ]);
+    }
 }
