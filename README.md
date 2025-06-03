@@ -1,6 +1,8 @@
 # Ravana API
 
-Ravana is a blogging platform backend built with **Laravel 12**, providing a RESTful API for managing articles, categories, comments, user authentication, bookmarks, and admin panel features.
+[![Repository](https://img.shields.io/badge/GitHub-ravana--api-blue?logo=github)](https://github.com/mlk9/ravana-api)
+
+Ravana is a blogging platform backend built with **Laravel 12**, offering a RESTful API to manage articles, categories, comments, user authentication, bookmarks, and an admin panel with role-based access control.
 
 ---
 
@@ -10,7 +12,7 @@ Ravana is a blogging platform backend built with **Laravel 12**, providing a RES
   Browse articles, categories, and article comments without authentication.
 
 - **User Authentication**  
-  Register, login, password reset, and profile management with Laravel Sanctum.
+  Register, login, password reset, and profile management secured via Laravel Sanctum.
 
 - **Commenting System**  
   Authenticated users can create, view, and manage comments on articles.
@@ -19,13 +21,10 @@ Ravana is a blogging platform backend built with **Laravel 12**, providing a RES
   Save and sync bookmarks across devices.
 
 - **Admin Panel**  
-  Role-based access for CEO and Writers to manage articles, categories, roles, comments, users, and images.
+  Role-based access for CEO and Writers to manage content, users, roles, comments, and images.
 
-- **Rate Limiting**  
-  Extensive throttle middleware to protect the API from abuse.
-
-- **Security**  
-  Middleware to check suspended users and enforce roles.
+- **Rate Limiting & Security**  
+  Throttle middleware for API protection and custom middleware to handle suspended users and permissions.
 
 ---
 
@@ -78,4 +77,11 @@ Ravana is a blogging platform backend built with **Laravel 12**, providing a RES
 
 ---
 
-Feel free to contribute or report issues to improve the Ravana API.
+## Repository
+
+You can find the source code and contribute at:  
+[https://github.com/mlk9/ravana-api](https://github.com/mlk9/ravana-api)
+
+---
+
+Feel free to open issues or submit pull requests to help improve the Ravana API.
