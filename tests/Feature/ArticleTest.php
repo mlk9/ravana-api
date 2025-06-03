@@ -307,5 +307,21 @@ class ArticleTest extends TestCase
             ->assertStatus(201)
             ->assertJsonStructure(['data']);
 
+        $data = [
+            'title' => 'Article One',
+            'slug' => 'article-one',
+            'thumbnail' => [
+                'original' => 'x',
+            ],
+            'body' => fake()->paragraph(5),
+            'tags' => 'tag1,tag2',
+            'status' => 'published',
+            'published_at' => now()->timestamp
+        ];
+
+        $data = $this->actingAs($user, 'sanctum')
+            ->postJson(route('api.v1.panel.articles.store'), $data)
+            ->assertStatus(422)
+            ->assertJsonStructure(['errors']);
     }
 }
