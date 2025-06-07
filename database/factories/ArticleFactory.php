@@ -36,7 +36,7 @@ class ArticleFactory extends Factory
         return [
             'title' => $title,
             'slug' => $slug,
-            'thumbnail' => null,
+            'thumbnail' => '#',
             'body' => $this->faker->paragraph(6),
             'tags' => $this->faker->words(6, true),
             'status' => $this->faker->randomElement(['draft', 'archived', 'published']),
