@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,6 +27,9 @@ class CategoryResource extends JsonResource
                'email' => $this->user?->email,
             ],
             'child' => CategoryResource::collection($this->whenLoaded('child')),
+            'articles_count' => Article::query()->whereHas('categories', function ($query) {
+                return $query->where('uuid', $this->uuid);
+            })->where('status','published')->count()
         ];
     }
 }

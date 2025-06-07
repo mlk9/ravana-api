@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Article;
+use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -35,5 +37,27 @@ class ArticleFactory extends Factory
             'published_at' => $this->faker->randomElement([now()->addDays(rand(1, 30)), now()->subDays(rand(1, 30))]),
             'author_uuid' => $author_uuid
         ];
+    }
+
+    public function configure() : Factory
+    {
+        return $this->afterCreating(function (Article $article) {
+            if(Category::query()->count() === 0)
+            {
+                Category::factory(10)->create();
+            }
+            $categoryUuids = Category::query()->inRandomOrder()->take(rand(1, 3))->pluck('uuid');
+            $article->categories()->sync($categoryUuids);
+        });
+    }
+
+    public function published() : Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'status' => 'published',
+                'published_at' => now(),
+            ];
+        });
     }
 }

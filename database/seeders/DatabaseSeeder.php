@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Article;
+use App\Models\Category;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -21,9 +22,8 @@ class DatabaseSeeder extends Seeder
              'email' => 'molkan99@gmail.com'
          ]);
 
-         Article::factory(50)->create();
-
-
+         $categories = Category::factory(10)->create();
+         $articles = Article::factory(50)->published()->create();
 
     }
 }
