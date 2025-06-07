@@ -5,13 +5,18 @@ namespace Database\Factories;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\User;
+use App\Services\ImageService;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
+use Intervention\Image\ImageManager;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Article>
  */
 class ArticleFactory extends Factory
 {
+
     /**
      * Define the model's default state.
      *
@@ -31,6 +36,7 @@ class ArticleFactory extends Factory
         return [
             'title' => $title,
             'slug' => $slug,
+            'thumbnail' => null,
             'body' => $this->faker->paragraph(6),
             'tags' => $this->faker->words(6, true),
             'status' => $this->faker->randomElement(['draft', 'archived', 'published']),
@@ -58,6 +64,50 @@ class ArticleFactory extends Factory
                 'status' => 'published',
                 'published_at' => now(),
             ];
+        });
+    }
+
+    private function createColoredImage(): string
+    {
+        $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+
+        // تولید رنگ تصادفی
+        $r = rand(0, 255);
+        $g = rand(0, 255);
+        $b = rand(0, 255);
+        $hexColor = sprintf('#%02X%02X%02X', $r, $g, $b);
+
+        // ساخت تصویر و پر کردن با رنگ
+        $image = $manager->create(640, 480)->fill($hexColor);
+        $path = storage_path('app/tmp/' . \Illuminate\Support\Str::random(10) . '.jpg');
+        @mkdir(dirname($path), 0777, true);
+        $image->toJpeg()->save($path);
+        return $path;
+    }
+
+    public function withImage(): Factory
+    {
+        return $this->afterMaking(function (Article $article) {
+
+            $path = $this->createColoredImage();
+
+            if (!file_exists($path)) {
+                throw new \Exception('Image not created: ' . $path);
+            }
+
+            $uploaded = new UploadedFile(
+                $path,
+                basename($path),
+                'image/jpeg',
+                null,
+                true // important for testing mode
+            );
+
+            $image = json_encode(app(ImageService::class)->upload([$uploaded])[0]);
+
+            $article->thumbnail = json_encode($image);
+
+            unlink($path);
         });
     }
 }

@@ -27,7 +27,7 @@ class ArticleResource extends JsonResource
         return [
             'uuid' => $this->uuid,
             'title' => $this->title,
-            'thumbnail' => $this->thumbnail,
+            'thumbnail' => is_null($this->thumbnail) ? [] : json_decode($this->thumbnail),
             'slug' => $this->slug,
             'tags' => $this->tags,
             'body' => $this->body,

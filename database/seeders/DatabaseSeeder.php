@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
          ]);
 
          $categories = Category::factory(10)->create();
-         $articles = Article::factory(50)->published()->create();
+         $articles = Article::factory(50)->published()->withImage()->create();
 
     }
 }
