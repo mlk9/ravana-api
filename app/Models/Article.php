@@ -29,7 +29,7 @@ class Article extends Model
 
     protected $casts = [
         'published_at' => 'datetime',
-        'thumbnail' => 'array'
+        'thumbnail' => 'object'
     ];
 
     protected $hidden = [

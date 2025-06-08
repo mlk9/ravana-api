@@ -23,11 +23,11 @@ class ArticleResource extends JsonResource
                 ->where('bookmark_able_type', 'App\Models\Article')
                 ->where('user_uuid', $request->user()->uuid)->exists();
         }
-
+        $thumbnail = $this->thumbnail;
         return [
             'uuid' => $this->uuid,
             'title' => $this->title,
-            'thumbnail' => is_null($this->thumbnail) ? [] : json_decode($this->thumbnail),
+            'thumbnail' => is_null($thumbnail) ? [] : (is_string($thumbnail) ? json_decode($thumbnail) : (object)$thumbnail),
             'slug' => $this->slug,
             'tags' => $this->tags,
             'body' => $this->body,
