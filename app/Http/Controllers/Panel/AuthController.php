@@ -39,7 +39,6 @@ class AuthController extends Controller
                 'token' => $token
             ],
             'code' => 201,
-            'cookie' => Cookie::make('auth_token', $token, 60 * 24, '/', null, false, true)
         ]);
     }
 
@@ -68,7 +67,6 @@ class AuthController extends Controller
                         'token' => $token
                     ],
                     'code' => 200,
-                    'cookie' => Cookie::make('auth_token', $token, 60 * 24, '/', null, false, true)
                 ]);
             }
         }
