@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
@@ -31,13 +32,14 @@ class AuthController extends Controller
         ]);
         $validated['password'] = Hash::make($validated['password']);
         $user = User::query()->create($validated);
-
+        $token = $user->createToken('First Api')->plainTextToken;
         return $this->success([
             'data' => [
                 'user' => new UserResource($user),
-                'token' => $user->createToken('First Api')->plainTextToken
+                'token' => $token
             ],
-            'code' => 201
+            'code' => 201,
+            'cookie' => Cookie::make('auth_token', $token, 60 * 24, '/', null, false, true)
         ]);
     }
 
@@ -59,16 +61,19 @@ class AuthController extends Controller
                         'code' => 403
                     ]);
                 }
-
+                $token = $user->createToken('First Api')->plainTextToken;
                 return $this->success([
                     'data' => [
                         'user' => new UserResource($user),
-                        'token' => $user->createToken('First Api')->plainTextToken
+                        'token' => $token
                     ],
-                    'code' => 200
+                    'code' => 200,
+                    'cookie' => Cookie::make('auth_token', $token, 60 * 24, '/', null, false, true)
                 ]);
             }
         }
+
+
         return $this->error([
             'message' => __('No users matched the given criteria.'),
             'errors' => ['email' => __('No users matched the given criteria.')],
