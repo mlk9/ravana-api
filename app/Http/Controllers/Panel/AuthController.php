@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -60,11 +61,13 @@ class AuthController extends Controller
                         'code' => 403
                     ]);
                 }
-                $token = $user->createToken('First Api')->plainTextToken;
+
+                Auth::login($user);
+//                $token = $user->createToken('First Api')->plainTextToken;
                 return $this->success([
                     'data' => [
                         'user' => new UserResource($user),
-                        'token' => $token
+//                        'token' => $token
                     ],
                     'code' => 200,
                 ]);

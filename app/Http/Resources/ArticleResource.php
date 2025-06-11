@@ -2,10 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Article;
 use App\Models\Bookmark;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleResource extends JsonResource
 {
@@ -16,12 +18,15 @@ class ArticleResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $user = Auth::user();
         $is_bookmark = false;
-        if ($request->user()) {
+
+        if ($user) {
             $is_bookmark = Bookmark::query()
                 ->where('bookmark_able_id', $this->uuid)
-                ->where('bookmark_able_type', 'App\Models\Article')
-                ->where('user_uuid', $request->user()->uuid)->exists();
+                ->where('bookmark_able_type', Article::class)
+                ->where('user_uuid', $user->uuid)
+                ->exists();
         }
         $thumbnail = $this->thumbnail;
         return [

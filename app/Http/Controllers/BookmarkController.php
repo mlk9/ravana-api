@@ -36,37 +36,42 @@ class BookmarkController extends Controller
         ]);
 
         $user = $request->user();
+        $bookmarkableType = null;
+        $bookmarkable = null;
 
-        $object = null;
+        if ($request->input('type') === 'article') {
+            $bookmarkableType = Article::class;
+            $bookmarkable = Article::query()->where('uuid', $request->input('id'))->firstOrFail();
+        }
 
-        if ($request->input('type') == 'article') {
+        if (!$bookmarkable) {
+            return $this->error('آیتم مورد نظر پیدا نشد.');
+        }
 
-            $exists = Bookmark::query()->where('bookmark_able_type', 'App\Models\Article')
-                ->where('bookmark_able_id', $request->input('id'))
-                ->where('user_uuid', $user->uuid)
-                ->first();
+        $existingBookmark = Bookmark::query()
+            ->where('bookmark_able_type', $bookmarkableType)
+            ->where('bookmark_able_id', $bookmarkable->uuid)
+            ->where('user_uuid', $user->uuid)
+            ->first();
 
-            if (is_null($exists)) {
-                $object = Article::query()->where('uuid', $request->input('id'))->firstOrFail();
+        if ($existingBookmark) {
+            if ($existingBookmark->delete()) {
+                return $this->success(['data' => false, 'code' => 200]);
             } else {
-                if ($exists->delete()) {
-                    return $this->success(['data' => false, 'code' => 200]);
-                } else {
-                    return $this->error();
-                }
+                return $this->error('حذف بوکمارک با خطا مواجه شد.');
             }
         }
 
         $bookmark = new Bookmark([
             'user_uuid' => $user->uuid,
         ]);
-
-        $bookmark->bookmark_able()->associate($object);
+        $bookmark->bookmark_able()->associate($bookmarkable);
 
         if ($bookmark->save() === false) {
-            return $this->error();
+            return $this->error('ثبت بوکمارک با خطا مواجه شد.');
         }
 
         return $this->success(['data' => true, 'code' => 201]);
     }
+
 }
