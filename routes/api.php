@@ -27,6 +27,7 @@ Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum', 'throttle:api'
     Route::apiResource('comments', \App\Http\Controllers\CommentController::class)->middleware(['throttle:10,1'])->only(['index', 'show', 'store']);
     Route::post('bookmarks/sync', [\App\Http\Controllers\BookmarkController::class, 'sync'])->middleware(['throttle:5,1'])->name('bookmarks.sync');
     Route::get('bookmarks', [\App\Http\Controllers\BookmarkController::class, 'index'])->name('bookmarks.index');
+    Route::post('articles/information', [\App\Http\Controllers\ArticleController::class, 'information'])->middleware(['throttle:25,1'])->name('articles.information');
     Route::get('me', [\App\Http\Controllers\UserController::class, 'me'])->middleware(['throttle:25,1'])
         ->name('me');
 });

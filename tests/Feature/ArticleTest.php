@@ -275,11 +275,25 @@ class ArticleTest extends TestCase
 
         $this->getJson(route('api.v1.articles.index'))
             ->assertStatus(200)
-            ->assertJsonStructure(['data' => ['data' => [ 0 => ['title'] ] ]]);
+            ->assertJsonStructure(['data' => ['data' => [0 => ['title']]]]);
 
         $this->getJson(route('api.v1.articles.show', $articles->first()))
             ->assertStatus(200)
             ->assertJsonStructure(['data' => ['title']]);
+    }
+
+    public function test_user_can_get_articles_information(): void
+    {
+        $user = User::factory()->create();
+        $articles = Article::factory(5)->create([
+            'published_at' => now()->subDays(1),
+            'status' => 'published'
+        ]);
+
+        $this->actingAs($user, 'sanctum')
+            ->postJson(route('api.v1.articles.information'),['articles' => $articles->pluck('uuid')->toArray()])
+            ->assertStatus(200)
+            ->assertJsonStructure(['data' => [0 => ['uuid', 'is_bookmark']]]);
     }
 
 

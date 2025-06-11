@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ArticleCollection;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
+use App\Models\Bookmark;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -117,6 +118,32 @@ class ArticleController extends Controller
             ->where('published_at', '<=', now())
             ->firstOrFail();
         return $this->success(['data' => new ArticleResource($article)]);
+    }
+
+    public function information(Request $request) : JsonResponse
+    {
+        $request->validate([
+            'articles' => ['required', 'array']
+        ]);
+
+        $bookmarks = Bookmark::query()
+            ->where('bookmark_able_type',Article::class)
+            ->whereIn('bookmark_able_id',$request->input('articles'))
+            ->where('user_uuid', $request->user()->uuid)
+            ->pluck('bookmark_able_id') // فقط آی‌دی‌هایی که بوکمارک شدن رو میاره
+            ->toArray();
+
+        $allIds = $request->input('articles');
+
+        $result = [];
+        foreach ($allIds as $id) {
+            $result[] = [
+                'uuid' => $id,
+                'is_bookmark' => in_array($id, $bookmarks),
+            ];
+        }
+
+        return $this->success(['data' => $result]);
     }
 
 }
