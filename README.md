@@ -32,48 +32,50 @@ Ravana is a blogging platform backend built with **Laravel 12**, offering a REST
 
 ### Public Routes (`/api/v1`)
 
-| Method | Endpoint                     | Description                        |
-|--------|------------------------------|----------------------------------|
-| GET    | `/articles`                  | List all articles                 |
-| GET    | `/articles/{slug}`           | Get article details by slug       |
-| GET    | `/categories`                | List all categories               |
-| GET    | `/categories/{slug}`         | Get category details by slug      |
-| GET    | `/articles/{uuid}/comments` | List comments for a specific article |
+| Method | Endpoint                     | Description                            |
+|--------|------------------------------|----------------------------------------|
+| GET    | `/articles`                  | List all articles                      |
+| GET    | `/articles/{slug}`           | Get article details by slug            |
+| GET    | `/categories`                | List all categories                    |
+| GET    | `/categories/{slug}`         | Get category details by slug           |
+| GET    | `/articles/{uuid}/comments`  | List comments for a specific article   |
 
 ### Authenticated Routes (`/api/v1` - Sanctum protected)
 
-| Method | Endpoint              | Description                 |
-|--------|-----------------------|-----------------------------|
-| GET    | `/comments`           | List user comments          |
-| GET    | `/comments/{id}`      | Show a specific comment     |
-| POST   | `/comments`           | Create a new comment        |
-| POST   | `/bookmarks/sync`     | Sync user bookmarks         |
-| GET    | `/bookmarks`          | List user bookmarks         |
-| GET    | `/me`                 | Get current user profile    |
+| Method | Endpoint                 | Description                                         |
+|--------|--------------------------|-----------------------------------------------------|
+| GET    | `/comments`              | List user comments                                  |
+| GET    | `/comments/{id}`         | Show a specific comment                             |
+| POST   | `/comments`              | Create a new comment                                |
+| POST   | `/bookmarks/sync`        | Sync user bookmarks                                 |
+| GET    | `/bookmarks`             | List user bookmarks                                 |
+| GET    | `/me`                    | Get current user profile                            |
+| POST   | `/articles/information`  | Get articles uuid sent information like is_bookmark |
+| GET    | `/sanctum/csrf-cookie`   | Get CSRF                                            |
 
 ### Authentication Routes (`/api/v1/auth` - Guest access)
 
 | Method | Endpoint                  | Description                 |
 |--------|---------------------------|-----------------------------|
-| POST   | `/register`               | Register a new user          |
+| POST   | `/register`               | Register a new user         |
 | POST   | `/login`                  | User login                  |
-| POST   | `/forgot`                 | Request password reset       |
-| POST   | `/forgot/change-password` | Change password after reset  |
+| POST   | `/forgot`                 | Request password reset      |
+| POST   | `/forgot/change-password` | Change password after reset |
 
 ### Admin Panel Routes (`/api/v1/panel` - Auth & Role protected)
 
-| Method | Endpoint                     | Description                     |
-|--------|------------------------------|---------------------------------|
-| GET    | `/auth/profile`              | View admin profile              |
-| PUT    | `/auth/profile`              | Update admin profile            |
-| *API Resource* | `/articles`          | Manage articles (CRUD)          |
-| *API Resource* | `/categories`        | Manage categories (CRUD)        |
-| *API Resource* | `/roles`             | Manage user roles (CRUD)        |
-| POST   | `/comments/{comment}/answer` | Answer to a comment             |
-| *API Resource* | `/comments`          | Manage comments (CRUD)          |
-| *API Resource* | `/users`             | Manage users (CRUD)             |
-| POST   | `/images/upload`             | Upload images                   |
-| DELETE | `/images/delete`             | Delete images                   |
+| Method          | Endpoint                     | Description                     |
+|-----------------|------------------------------|---------------------------------|
+| GET             | `/auth/profile`              | View admin profile              |
+| PUT             | `/auth/profile`              | Update admin profile            |
+| *API Resource*  | `/articles`                  | Manage articles (CRUD)          |
+| *API Resource*  | `/categories`                | Manage categories (CRUD)        |
+| *API Resource*  | `/roles`                     | Manage user roles (CRUD)        |
+| POST            | `/comments/{comment}/answer` | Answer to a comment             |
+| *API Resource*  | `/comments`                  | Manage comments (CRUD)          |
+| *API Resource*  | `/users`                     | Manage users (CRUD)             |
+| POST            | `/images/upload`             | Upload images                   |
+| DELETE          | `/images/delete`             | Delete images                   |
 
 ---
 
